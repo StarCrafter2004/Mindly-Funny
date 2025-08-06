@@ -1,0 +1,156 @@
+{
+  "welcome": {
+    "title": "Challenge Your Mind",
+    "description": "A quick and accurate way to assess your logical thinking and reasoning skills.",
+    "start": "Let’s Start!"
+  },
+  "theme": {
+    "title": "Choose Theme",
+    "description": "Select your preferred theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "title": "Choose language",
+    "description": "Select your language for a better experience!"
+  },
+  "settings": {
+    "title": "App Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "importantLinks": "Important Links",
+
+    "privacyPolicy": "Privacy Policy",
+    "userAgreement": "User Agreement",
+    "contactUs": "Contact Us"
+  },
+  "main": {
+    "title": "Available Tests",
+    "all": "All",
+    "free": "Free",
+    "paid": "Paid",
+    "purchased": "Purchased",
+    "gift": "Gift"
+  },
+  "pricingCard": {
+    "buyTest": "Buy Test",
+    "upgradePremium": "Upgrade to Premium",
+    "freeTests": "Free Tests",
+    "freeTestsDescription": "Any test is available for free!",
+    "freeReports": "Free Reports",
+    "freeReportsDescription": "Free full reports for any test",
+    "uniqueCrown": "Unique Crown",
+    "uniqueCrownDescription": "Unique badge added to your profile"
+  },
+  "offersSlider": {
+    "title": "Unlock Full Access",
+    "description": "Go Premium to get unlimited tests, detailed reports, and smarter insights — no limits, just results.",
+    "buyPremium": "Buy Premium",
+    "getFreeTest": "Get a Free Test",
+    "inviteDescription": "Turn your invites into free brain-boosting challenges — every 3 friends who buy a test unlock one for you."
+  },
+  "profile": {
+    "title": "Fill the Profile",
+    "completedTests": "Completed Tests",
+    "empty": "There are no completed tests yet",
+    "goToTests": "Go to the tests",
+    "viewAll": "View All",
+    "invitations": {
+      "title": "Invitations",
+      "description": "Invite 3 friends to buy a test and unlock a free brain challenge!"
+    }
+  },
+  "completedTests": {
+    "title": "Completed Tests",
+    "NoTests": "There are no completed tests yet",
+    "goToTests": "Go to the tests"
+  },
+  "invitations": {
+    "title": "Get a Free Test",
+    "description": "Turn your invites into free brain-boosting challenges — every 3 friends who buy a test unlock one for you.",
+    "buyPremium": "Buy Premium",
+    "freeReport": "Free Report",
+    "freeTest": "Free Test",
+    "yourInvitations": "Your Invitations",
+    "purchased": "Purchased",
+    "accepted": "Accepted",
+    "reward": "Pick up reward"
+  },
+
+  "fillProfile": {
+    "title": "Fill your profile",
+    "description": "Fill out profile for accurate results!",
+    "notSet": "Not set",
+    "male": "Male",
+    "female": "Female",
+    "age": "Age",
+    "profession": "Profession",
+    "country": "Country",
+    "save": "Save"
+  },
+  "profession": {
+    "title": "Choose Profession",
+    "description": "Choose your profession to compare yourself with other workers"
+  },
+  "professions": {
+    "Agriculture & Fisheries": "Agriculture & Fisheries",
+    "Mining & Quarrying": "Mining & Quarrying",
+    "Manufacturing": "Manufacturing",
+    "Energy & Utilities": "Energy & Utilities",
+    "Construction & Real Estate": "Construction & Real Estate",
+    "Transport & Logistics": "Transport & Logistics",
+    "IT & Telecommunications": "IT & Telecommunications",
+    "Financial & Insurance Services": "Financial & Insurance Services",
+    "Healthcare & Social Services": "Healthcare & Social Services",
+    "Education & Research": "Education & Research",
+    "Hospitality & Tourism": "Hospitality & Tourism",
+    "Wholesale & Retail": "Wholesale & Retail",
+    "Culture, Arts & Entertainment": "Culture, Arts & Entertainment",
+    "Legal & Consultancy Services": "Legal & Consultancy Services",
+    "Public Administration & Non-profits": "Public Administration & Non-profits",
+    "R&D": "R&D",
+    "Environmental & Conservation Services": "Environmental & Conservation Services",
+    "Telecom & Media": "Telecom & Media",
+    "Personal & Household Services": "Personal & Household Services",
+    "Creative Industries & Digital Content": "Creative Industries & Digital Content"
+  },
+  "country": {
+    "title": "Choose Country",
+    "description": "Choose your country to compare yourself with other people in it"
+  },
+
+  "common": {
+    "search": "Search"
+  },
+  "test": {
+    "next": "Next Question",
+    "preparing": "Preparing the results",
+    "analyzing": "Analyzing the answers..."
+  },
+  "results": {
+    "title": "Results",
+    "iqScore": "IQ Score",
+    "worldComparison": "You are smarter than <percent>{{percent}}</percent>% of people in the world.",
+    "statistics": "Statistics",
+    "celebrityComparisonTitle": "You Just Outsmarted <celebrity>{{celebrity}}</celebrity>",
+    "celebrityComparisonText": "Your IQ just left <celebrity>{{celebrity}}</celebrity> in the dust. He’s only got <celebrityIQ>{{celebrityIQ}}</celebrityIQ>!",
+    "profession": "Profession",
+    "professionText": "You outperformed <percent>{{percent}}%</percent> of people in <profession>{{profession}}</profession>.",
+    "country": "Country",
+    "countryText": "You scored higher than <percent>{{percent}}%</percent> of people in <country>{{country}}</country>.",
+    "age": "Age",
+    "ageText": "You are smarter than <percent>{{percent}}%</percent> of people in your age group.",
+    "answers": {
+      "title": "Answers",
+      "viewAll": "View all answers"
+    },
+    "moreTests": "More Tests for You",
+    "share": "Share",
+    "buy": "Buy Full Report",
+    "homeScreen": "Home Screen",
+    "timeLeft": "Time left",
+    "preparing": "Preparing the results",
+    "analyzing": "Analyzing the answers..."
+  }
+}

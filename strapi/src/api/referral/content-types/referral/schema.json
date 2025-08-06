@@ -1,0 +1,28 @@
+{
+  "kind": "collectionType",
+  "collectionName": "referrals",
+  "info": {
+    "singularName": "referral",
+    "pluralName": "referrals",
+    "displayName": "Referral"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "user_id": {
+      "type": "biginteger",
+      "required": true,
+      "unique": true
+    },
+    "referrer_id": {
+      "type": "biginteger",
+      "required": true
+    },
+    "isUsed": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

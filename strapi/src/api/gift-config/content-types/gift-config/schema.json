@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "gift_configs",
+  "info": {
+    "singularName": "gift-config",
+    "pluralName": "gift-configs",
+    "displayName": "GiftConfig"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "FreeReportCost": {
+      "type": "integer"
+    },
+    "FreeTestCost": {
+      "type": "integer"
+    }
+  }
+}

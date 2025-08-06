@@ -1,0 +1,74 @@
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx_assets:/usr/share/nginx/assets:ro
+
+        # ./nginx_assets:/usr/share/nginx/assets
+    depends_on:
+      - frontend
+      - strapi
+      - bot
+    networks:
+      - app-network
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: strapi_user
+      POSTGRES_PASSWORD: 3344
+      POSTGRES_DB: strapi_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    env_file:
+      - ./frontend/.env
+    environment:
+      VITE_API_URL: https://iq-fun.myfavouritegames.org
+    networks:
+      - app-network
+
+  strapi:
+    build: ./strapi
+    env_file:
+      - ./strapi/.env
+    volumes:
+      - ./strapi-uploads:/app/public/uploads
+    environment:
+      DATABASE_CLIENT: postgres
+      POSTGRES_USER: strapi_user
+      POSTGRES_PASSWORD: 3344
+      POSTGRES_DB: strapi_db
+      DATABASE_HOST: db
+      ADMIN_PATH: /cms
+      TELEGRAM_BOT_TOKEN: 7909103605:AAGXQChrctHXFRvTBnIBJ10O9XINLU7_m7g
+      SRM_URL: /srm
+    ports:
+      - "1337:1337"
+    networks:
+      - app-network
+
+  bot:
+    build: ./bot
+    env_file:
+      - ./bot/.env
+    environment:
+      API_BASE_URL: http://strapi:1337
+      TELEGRAM_BOT_TOKEN: 7909103605:AAGXQChrctHXFRvTBnIBJ10O9XINLU7_m7g
+    command: npm run dev
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge

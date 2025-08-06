@@ -1,0 +1,18 @@
+{
+  "kind": "singleType",
+  "collectionName": "celebrities",
+  "info": {
+    "singularName": "celebrity",
+    "pluralName": "celebrities",
+    "displayName": "Celebrity"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "iqs": {
+      "type": "json"
+    }
+  }
+}

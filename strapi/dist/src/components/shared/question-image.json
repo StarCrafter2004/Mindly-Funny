@@ -1,0 +1,24 @@
+{
+    "collectionName": "components_shared_question_images",
+    "info": {
+        "displayName": "QuestionImage",
+        "icon": "alien"
+    },
+    "options": {},
+    "attributes": {
+        "index": {
+            "type": "integer"
+        },
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images",
+                "files",
+                "videos",
+                "audios"
+            ]
+        }
+    },
+    "config": {}
+}

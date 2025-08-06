@@ -1,0 +1,4 @@
+node_modules
+dist
+dist-ssr
+strapi/.strapi/.tmp/data.db

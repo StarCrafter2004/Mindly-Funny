@@ -1,0 +1,68 @@
+{
+    "kind": "collectionType",
+    "collectionName": "t_users",
+    "info": {
+        "singularName": "t-user",
+        "pluralName": "t-users",
+        "displayName": "TUser"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "telegram_id": {
+            "type": "biginteger",
+            "required": true,
+            "unique": true
+        },
+        "username": {
+            "type": "string"
+        },
+        "firstName": {
+            "type": "string"
+        },
+        "lastName": {
+            "type": "string"
+        },
+        "sex": {
+            "type": "string",
+            "default": "notSet"
+        },
+        "age": {
+            "type": "string"
+        },
+        "profession": {
+            "type": "string"
+        },
+        "country": {
+            "type": "string"
+        },
+        "isProfileComplete": {
+            "type": "boolean",
+            "default": false
+        },
+        "isPremium": {
+            "type": "boolean"
+        },
+        "premiumUntil": {
+            "type": "datetime"
+        },
+        "freeReportsCounter": {
+            "type": "integer",
+            "default": 0
+        },
+        "freeTestsCounter": {
+            "type": "integer",
+            "default": 0
+        },
+        "freeTests": {
+            "type": "integer",
+            "default": 0
+        },
+        "freeReports": {
+            "type": "integer",
+            "default": 0
+        }
+    }
+}

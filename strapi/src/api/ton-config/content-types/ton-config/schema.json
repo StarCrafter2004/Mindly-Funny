@@ -1,0 +1,21 @@
+{
+  "kind": "singleType",
+  "collectionName": "ton_configs",
+  "info": {
+    "singularName": "ton-config",
+    "pluralName": "ton-configs",
+    "displayName": "TonConfig"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "wallet": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    }
+  }
+}

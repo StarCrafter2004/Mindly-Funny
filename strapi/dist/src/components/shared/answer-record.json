@@ -1,0 +1,23 @@
+{
+    "collectionName": "components_shared_answer_records",
+    "info": {
+        "displayName": "AnswerRecord",
+        "icon": "alien"
+    },
+    "options": {},
+    "attributes": {
+        "questionIndex": {
+            "type": "integer"
+        },
+        "answerIndex": {
+            "type": "integer"
+        },
+        "isCorrect": {
+            "type": "boolean"
+        },
+        "correctAnswerIndex": {
+            "type": "integer"
+        }
+    },
+    "config": {}
+}

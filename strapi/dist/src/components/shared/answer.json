@@ -1,0 +1,20 @@
+{
+    "collectionName": "components_shared_answers",
+    "info": {
+        "displayName": "answer",
+        "icon": "alien"
+    },
+    "options": {},
+    "attributes": {
+        "text": {
+            "type": "string",
+            "required": true
+        },
+        "isCorrect": {
+            "type": "boolean",
+            "required": true,
+            "default": false
+        }
+    },
+    "config": {}
+}

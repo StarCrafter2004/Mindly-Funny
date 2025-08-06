@@ -1,0 +1,33 @@
+{
+  "kind": "collectionType",
+  "collectionName": "test_results",
+  "info": {
+    "singularName": "test-result",
+    "pluralName": "test-results",
+    "displayName": "TestResult"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "telegram_id": {
+      "type": "biginteger",
+      "required": true
+    },
+    "testId": {
+      "type": "string",
+      "required": true
+    },
+    "AnswerRecords": {
+      "type": "component",
+      "component": "shared.answer-record",
+      "repeatable": true,
+      "required": true
+    },
+    "iq": {
+      "type": "integer",
+      "required": true
+    }
+  }
+}

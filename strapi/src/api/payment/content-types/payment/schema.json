@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "payments",
+  "info": {
+    "singularName": "payment",
+    "pluralName": "payments",
+    "displayName": "Payment"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "userId": {
+      "type": "biginteger",
+      "required": true
+    },
+    "payload": {
+      "type": "string",
+      "required": true
+    },
+    "type": {
+      "type": "string",
+      "required": true
+    },
+    "extra": {
+      "type": "string",
+      "required": true
+    },
+    "amount": {
+      "type": "decimal"
+    },
+    "currency": {
+      "type": "string",
+      "required": true
+    },
+    "payment_status": {
+      "type": "string",
+      "required": true
+    },
+    "invoiceUrl": {
+      "type": "string",
+      "required": false
+    },
+    "telegramChargeId": {
+      "type": "string"
+    },
+    "wallet": {
+      "type": "string"
+    }
+  }
+}

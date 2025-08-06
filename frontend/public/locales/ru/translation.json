@@ -1,0 +1,144 @@
+{
+  "welcome": {
+    "title": "Проверь свои умственные способности",
+    "description": "Быстрый и точный способ оценить логическое мышление и навыки рассуждения.",
+    "start": "Начать!"
+  },
+  "theme": {
+    "title": "Выбор темы",
+    "description": "Выберите предпочитаемую тему",
+    "light": "Светлая",
+    "dark": "Тёмная",
+    "system": "Системная"
+  },
+  "language": {
+    "title": "Выбор языка",
+    "description": "Выберите язык для лучшего опыта!"
+  },
+  "settings": {
+    "title": "Настройки приложения",
+    "language": "Язык",
+    "theme": "Тема",
+    "importantLinks": "Важные ссылки",
+    "privacyPolicy": "Политика конфиденциальности",
+    "userAgreement": "Пользовательское соглашение",
+    "contactUs": "Связаться с нами"
+  },
+  "main": {
+    "title": "Доступные тесты"
+  },
+  "pricingCard": {
+    "buyTest": "Купить тест",
+    "upgradePremium": "Перейти на Premium",
+    "freeTests": "Бесплатные тесты",
+    "freeTestsDescription": "Любой тест доступен бесплатно!",
+    "freeReports": "Бесплатные отчёты",
+    "freeReportsDescription": "Полные отчёты для любого теста бесплатно",
+    "uniqueCrown": "Уникальная корона",
+    "uniqueCrownDescription": "Уникальный значок добавлен в ваш профиль"
+  },
+  "offersSlider": {
+    "title": "Откройте полный доступ",
+    "description": "Получите Premium, чтобы пройти неограниченное количество тестов, получить подробные отчёты и умные рекомендации — без ограничений, только результат.",
+    "buyPremium": "Купить Premium",
+    "getFreeTest": "Получить бесплатный тест",
+    "inviteDescription": "Приглашайте друзей, чтобы получить бесплатные интеллектуальные вызовы — за каждые 3 покупки ваш тест бесплатно!"
+  },
+  "profile": {
+    "title": "Заполнить профиль",
+    "completedTests": "Пройденные тесты",
+    "empty": "Пока нет пройденных тестов",
+    "goToTests": "Перейти к тестам",
+    "viewAll": "Посмотреть все",
+    "invitations": {
+      "title": "Приглашения",
+      "description": "Пригласите 3 друзей купить тест и получите бесплатный интеллектуальный вызов!"
+    }
+  },
+  "completedTests": {
+    "title": "Пройденные тесты",
+    "goToTests": "Перейти к тестам"
+  },
+
+  "invitations": {
+    "title": "Получить бесплатный тест",
+    "description": "Приглашайте друзей, чтобы получить бесплатные интеллектуальные вызовы — за каждые 3 покупки ваш тест бесплатно!",
+    "buyPremium": "Купить Premium",
+    "freeReport": "Бесплатный отчёт",
+    "freeTest": "Бесплатный тест",
+    "yourInvitations": "Ваши приглашения",
+    "purchased": "Куплено",
+    "accepted": "Принято"
+  },
+
+  "fillProfile": {
+    "title": "Заполните профиль",
+    "description": "Заполните профиль для точных результатов!",
+    "notSet": "Не указано",
+    "male": "Мужской",
+    "female": "Женский",
+    "age": "Возраст",
+    "profession": "Профессия",
+    "country": "Страна",
+    "save": "Сохранить"
+  },
+  "country": {
+    "title": "Выбор страны",
+    "description": "Выберите страну, чтобы сравнить себя с её жителями"
+  },
+  "test": {
+    "next": "Следующий вопрос",
+    "preparing": "Подготовка результатов",
+    "analyzing": "Анализ ответов..."
+  },
+  "results": {
+    "title": "Результаты",
+    "iqScore": "IQ балл",
+    "worldComparisonStart": "Вы умнее, чем",
+    "worldComparisonEnd": "людей в мире.",
+
+    "statistics": "Статистика",
+    "celebrityComparisonTitle": "Вы обошли ",
+    "celebrityComparisonText": "Ваш IQ оставил {{celebrity}} позади. У него всего {{celebrityIQ}}!",
+    "profession": "Вы лучше, чем {{percent}}% людей с профессией {{profession}}.",
+    "country": "Вы превзошли {{percent}}% людей из страны {{country}}.",
+    "age": "Вы умнее, чем {{percent}}% людей вашего возраста.",
+    "answers": {
+      "title": "Ответы",
+      "viewAll": "Посмотреть все ответы"
+    },
+    "moreTests": "Больше тестов для вас",
+    "share": "Поделиться",
+    "homeScreen": "На главный экран",
+    "timeLeft": "Время истекло"
+  },
+  "profession": {
+    "title": "Выберите профессию",
+    "description": "Выберите свою профессию, чтобы сравнить себя с другими работниками"
+  },
+  "professions": {
+    "Agriculture & Fisheries": "Сельское хозяйство и рыболовство",
+    "Mining & Quarrying": "Горнодобывающая промышленность",
+    "Manufacturing": "Производство",
+    "Energy & Utilities": "Энергетика и коммунальные услуги",
+    "Construction & Real Estate": "Строительство и недвижимость",
+    "Transport & Logistics": "Транспорт и логистика",
+    "IT & Telecommunications": "IT и телекоммуникации",
+    "Financial & Insurance Services": "Финансовые и страховые услуги",
+    "Healthcare & Social Services": "Здравоохранение и социальные службы",
+    "Education & Research": "Образование и исследования",
+    "Hospitality & Tourism": "Гостеприимство и туризм",
+    "Wholesale & Retail": "Оптовая и розничная торговля",
+    "Culture, Arts & Entertainment": "Культура, искусство и развлечения",
+    "Legal & Consultancy Services": "Юридические и консалтинговые услуги",
+    "Public Administration & Non-profits": "Госслужба и НКО",
+    "R&D": "Научные исследования и разработки",
+    "Environmental & Conservation Services": "Охрана окружающей среды",
+    "Telecom & Media": "Телеком и медиа",
+    "Personal & Household Services": "Бытовые и личные услуги",
+    "Creative Industries & Digital Content": "Креативные индустрии и цифровой контент"
+  },
+  "common": {
+    "search": "Поиск"
+  }
+}

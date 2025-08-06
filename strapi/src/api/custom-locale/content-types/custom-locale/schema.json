@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "custom_locales",
+  "info": {
+    "singularName": "custom-locale",
+    "pluralName": "custom-locales",
+    "displayName": "CustomLocale"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "code": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "AppTranslation": {
+      "type": "json"
+    }
+  }
+}
