@@ -48,7 +48,7 @@ services:
       POSTGRES_DB: strapi_db
       DATABASE_HOST: db
       ADMIN_PATH: /cms
-      TELEGRAM_BOT_TOKEN: 7909103605:AAGXQChrctHXFRvTBnIBJ10O9XINLU7_m7g
+      TELEGRAM_BOT_TOKEN: 8028947405:AAFW_-Igncshnp49XqAG9XUI4h8Rthgg4jc
       SRM_URL: /srm
     ports:
       - "1337:1337"
@@ -61,7 +61,7 @@ services:
       - ./bot/.env
     environment:
       API_BASE_URL: http://strapi:1337
-      TELEGRAM_BOT_TOKEN: 7909103605:AAGXQChrctHXFRvTBnIBJ10O9XINLU7_m7g
+      TELEGRAM_BOT_TOKEN: 8028947405:AAFW_-Igncshnp49XqAG9XUI4h8Rthgg4jc
     command: npm run dev
     networks:
       - app-network
