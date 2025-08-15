@@ -10,5 +10,5 @@ export default ({ env }) => ({
     enabled: true,
     tasks: cronTasks,
   },
-  url: "/srm",
+  // url: "/srm",
 });

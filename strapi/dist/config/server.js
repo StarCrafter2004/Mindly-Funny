@@ -14,5 +14,5 @@ exports.default = ({ env }) => ({
         enabled: true,
         tasks: cron_tasks_1.default,
     },
-    url: "/srm",
+    // url: "/srm",
 });
