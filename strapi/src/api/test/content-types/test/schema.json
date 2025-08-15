@@ -24,6 +24,15 @@
       },
       "required": true
     },
+    "description": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": false
+    },
     "questions": {
       "type": "component",
       "pluginOptions": {
@@ -35,14 +44,14 @@
       "repeatable": true,
       "required": true
     },
-    "description": {
+    "type": {
       "type": "string",
       "pluginOptions": {
         "i18n": {
-          "localized": true
+          "localized": false
         }
       },
-      "required": false
+      "required": true
     },
     "stars": {
       "type": "integer",
@@ -87,39 +96,43 @@
       },
       "default": true
     },
-    "isReportFree": {
-      "type": "boolean",
+    "tresholds": {
+      "type": "component",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "shared.threshold",
+      "repeatable": true
+    },
+    "statuses": {
+      "type": "component",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "component": "shared.status",
+      "repeatable": true
+    },
+    "statusImages": {
+      "type": "component",
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       },
-      "default": true
+      "component": "shared.status-image",
+      "repeatable": true
     },
-    "resultsStars": {
-      "type": "integer",
+    "filter": {
+      "type": "string",
       "pluginOptions": {
         "i18n": {
           "localized": false
         }
       }
-    },
-    "resultsTon": {
-      "type": "decimal",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      }
-    },
-    "isGift": {
-      "type": "boolean",
-      "pluginOptions": {
-        "i18n": {
-          "localized": false
-        }
-      },
-      "default": false
     }
   }
 }

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const init_data_node_1 = require("@telegram-apps/init-data-node");
-const EXCLUDE_PATHS = ["/api/tests", "/api/payments", "/api/purchases", "/api/ton-config"];
+const EXCLUDE_PATHS = ["/api/tests", "/api/payments", "/api/purchases", "/api/ton-config", "/api/increment-life"];
 const EXCLUDE_POST_PATHS = ["/api/tests", "/api/payments", "/api/purchases", "/api/referrals"];
 const EXCLUDE_GET_PATHS = ["/api/t-users", "/api/bot-tests"];
 const EXCLUDE_PUT_PATHS = ["/api/t-users/update-premium/", "/api/tests"];
@@ -20,27 +20,23 @@ exports.default = (config, { strapi }) => {
             console.log("⚡ Excluded PUT path:", ctx.request.path);
             return await next();
         }
-        console.log("path", ctx.request.path);
         // игнорируем исключения
         if (EXCLUDE_PATHS.includes(ctx.request.path)) {
             console.log("⚡ Excluded path:", ctx.request.path);
             return await next();
         }
-        console.log("test");
         if ((ctx.method === "POST" || ctx.method === "PUT") && EXCLUDE_POST_PATHS.includes(ctx.request.path)) {
             console.log("⚡ Excluded POST path:", ctx.request.path);
             return await next();
         }
         const auth = ctx.request.headers["authorization"] || "";
         const [method, initDataRaw = ""] = auth.split(" ");
-        console.log(auth);
         if (method !== "tma" || !initDataRaw) {
             ctx.status = 401;
             ctx.body = { error: "Unauthorized: missing initData" };
             return;
         }
         try {
-            console.log("проверка");
             (0, init_data_node_1.validate)(initDataRaw, process.env.TELEGRAM_BOT_TOKEN, { expiresIn: 86400 });
             const initData = (0, init_data_node_1.parse)(initDataRaw);
             ctx.state.userId = String(initData.user.id);

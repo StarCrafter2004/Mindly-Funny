@@ -12,21 +12,30 @@ invoiceRoutes.options("/create-invoice", (req, res) => {
   res.sendStatus(200);
 });
 invoiceRoutes.post("/create-invoice", async (req: Request, res: Response) => {
-  console.log("star");
+  console.log("POST /create-invoice called", req.body);
+
   try {
-    const { title, description, amount, type, testId, duration } = req.body;
+    const { title, description, amount, type, testId, duration, quantity } = req.body;
+
     if (type === "premium" && !duration) return res.status(400).json({ error: "duration обязателен для premium" });
     if (type === "test" && !testId) return res.status(400).json({ error: "testId обязателен для test" });
+    if (type === "lives" && !quantity) return res.status(400).json({ error: "quantity обязателен для lives" });
 
     const userId = res.locals.userId;
-    const extra = type === "premium" ? duration! : testId!;
+    let extra: string | number;
+
+    if (type === "premium") {
+      extra = duration!;
+    } else if (type === "lives") {
+      extra = quantity!;
+    } else {
+      extra = testId!;
+    }
     const label =
       type === "premium" ? `Premium ${extra} days` : type === "test" ? `Test #${extra}` : `Result #${extra}`;
-    const timestamp = Date.now(); // число, вроде 1721507665123
-
+    const timestamp = Date.now();
     const payload = `${userId}-${type}-${extra}-${timestamp}`;
 
-    // 1️⃣ Генерация ссылки (возможно, сюда попадёт ошибка)
     let invoiceUrl: string;
     try {
       invoiceUrl = await bot.telegram.createInvoiceLink({
@@ -37,12 +46,15 @@ invoiceRoutes.post("/create-invoice", async (req: Request, res: Response) => {
         currency: "XTR",
         prices: [{ label, amount }],
       });
+      console.log("Invoice link created:", invoiceUrl);
     } catch (err) {
       console.error("Ошибка создания invoiceLink:", err);
-      return res.status(502).json({ error: "Ошибка связи с Telegram" });
+      return res.status(502).json({
+        error: "Ошибка связи с Telegram",
+        details: err instanceof Error ? err.message : err,
+      });
     }
 
-    // 2️⃣ Сохранение в Strapi
     try {
       await api.post(
         "/api/payments",
@@ -58,33 +70,43 @@ invoiceRoutes.post("/create-invoice", async (req: Request, res: Response) => {
             invoiceUrl,
           },
         },
-        {
-          headers: {
-            Authorization: `bearer ${process.env.STRAPI_API_TOKEN}`,
-          },
-        }
+        { headers: { Authorization: `bearer ${process.env.STRAPI_API_TOKEN}` } }
       );
-    } catch (err) {
+      console.log("Payment saved in Strapi");
+    } catch (err: any) {
       console.error("Ошибка записи в Strapi:", err);
-      return res.status(502).json({ error: "Не удалось сохранить платёж" });
+      return res.status(err.response?.status || 502).json({
+        error: "Не удалось сохранить платёж",
+        details: err.response?.data || err.message || err,
+      });
     }
 
-    // 3️⃣ Возврат успешного результата
     return res.json({ invoiceUrl });
-  } catch (err) {
+  } catch (err: any) {
     console.error("Необработанная ошибка в /create-invoice:", err);
-    return res.status(500).json({ error: "Внутренняя ошибка сервера" });
+    return res.status(500).json({
+      error: "Внутренняя ошибка сервера",
+      details: err.message || err,
+    });
   }
 });
 
 invoiceRoutes.post("/create-invoice-ton", async (req: Request, res: Response) => {
   try {
-    const { amount, type, testId, duration, wallet } = req.body;
+    const { amount, type, testId, duration, wallet, quantity } = req.body;
     if (type === "premium" && !duration) return res.status(400).json({ error: "duration обязателен для premium" });
     if (type === "test" && !testId) return res.status(400).json({ error: "testId обязателен для test" });
 
     const userId = res.locals.userId;
-    const extra = type === "premium" ? duration! : testId!;
+    let extra: string | number;
+
+    if (type === "premium") {
+      extra = duration!;
+    } else if (type === "lives") {
+      extra = quantity!;
+    } else {
+      extra = testId!;
+    }
     console.log("type", type);
     const timestamp = Date.now(); // число, вроде 1721507665123
 
@@ -199,20 +221,61 @@ invoiceRoutes.post("/verify-ton-boc", async (req, res) => {
 
 async function setPurchase(payload: string) {
   const [userId, type, extra] = payload.split("-");
-  if (type === "premium") {
-    api.put(`/api/t-users/update-premium/${userId}`, {
-      data: {
-        isPremium: true,
-      },
-    });
+  console.log("extra", extra);
+  console.log(userId, type, extra);
+
+  try {
+    if (type === "premium") {
+      const now = new Date();
+      const premiumUntil = new Date(now.setMonth(now.getMonth() + 1));
+
+      try {
+        await api.put(`/api/t-users/update-premium/${userId}`, {
+          data: {
+            isPremium: true,
+            premiumUntil: premiumUntil.toISOString(),
+          },
+        });
+      } catch (err) {
+        console.error("[ERROR] update-premium failed:", err);
+      }
+    }
+
+    if (type === "lives") {
+      try {
+        await api.post(`/api/increment-life`, {
+          userId,
+          quantity: extra,
+        });
+      } catch (err) {
+        console.error("[ERROR] increment-life failed:", err);
+      }
+    }
+
+    try {
+      await api.put(`/api/payment/update-payment`, {
+        payload,
+        payment_status: "payd",
+      });
+    } catch (err) {
+      console.error("[ERROR] update-payment failed:", err);
+    }
+
+    try {
+      const res = await api.post("/api/purchases", {
+        data: {
+          userId,
+          type,
+          extra,
+        },
+      });
+      console.log("[PURCHASE SAVED]", res.data);
+    } catch (err) {
+      console.error("[ERROR] save purchase failed:", err);
+    }
+  } catch (err) {
+    console.error("[CRITICAL] setPurchase crashed:", err);
   }
-  const res = await api.post("/api/purchases", {
-    data: {
-      userId,
-      type,
-      extra,
-    },
-  });
 }
 
 export default invoiceRoutes;

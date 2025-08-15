@@ -10,6 +10,7 @@ export interface SharedAnswer extends Struct.ComponentSchema {
     isCorrect: Schema.Attribute.Boolean &
       Schema.Attribute.Required &
       Schema.Attribute.DefaultTo<false>;
+    statusIndex: Schema.Attribute.Integer;
     text: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -17,13 +18,11 @@ export interface SharedAnswer extends Struct.ComponentSchema {
 export interface SharedAnswerRecord extends Struct.ComponentSchema {
   collectionName: 'components_shared_answer_records';
   info: {
-    displayName: 'AnswerRecord';
+    displayName: 'answerRecord';
     icon: 'alien';
   };
   attributes: {
     answerIndex: Schema.Attribute.Integer;
-    correctAnswerIndex: Schema.Attribute.Integer;
-    isCorrect: Schema.Attribute.Boolean;
     questionIndex: Schema.Attribute.Integer;
   };
 }
@@ -53,6 +52,42 @@ export interface SharedQuestionImage extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedStatus extends Struct.ComponentSchema {
+  collectionName: 'components_shared_statuses';
+  info: {
+    displayName: 'status';
+  };
+  attributes: {
+    description: Schema.Attribute.String;
+    name: Schema.Attribute.String;
+    statusIndex: Schema.Attribute.Integer;
+  };
+}
+
+export interface SharedStatusImage extends Struct.ComponentSchema {
+  collectionName: 'components_shared_status_images';
+  info: {
+    displayName: 'StatusImage';
+  };
+  attributes: {
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    index: Schema.Attribute.Integer;
+  };
+}
+
+export interface SharedThreshold extends Struct.ComponentSchema {
+  collectionName: 'components_shared_thresholds';
+  info: {
+    displayName: 'Threshold';
+    icon: 'alien';
+  };
+  attributes: {
+    minCorrect: Schema.Attribute.Integer;
+    resultDescription: Schema.Attribute.Text;
+    statusIndex: Schema.Attribute.Integer;
+  };
+}
+
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
@@ -60,6 +95,9 @@ declare module '@strapi/strapi' {
       'shared.answer-record': SharedAnswerRecord;
       'shared.question': SharedQuestion;
       'shared.question-image': SharedQuestionImage;
+      'shared.status': SharedStatus;
+      'shared.status-image': SharedStatusImage;
+      'shared.threshold': SharedThreshold;
     }
   }
 }

@@ -11,10 +11,13 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "FreeReportCost": {
+    "FreePremiumCost": {
       "type": "integer"
     },
-    "FreeTestCost": {
+    "FreeLivesCost": {
+      "type": "integer"
+    },
+    "LivesForRefs": {
       "type": "integer"
     }
   }

@@ -48,21 +48,29 @@
     "premiumUntil": {
       "type": "datetime"
     },
-    "freeReportsCounter": {
+    "freePremiumCounter": {
       "type": "integer",
       "default": 0
     },
-    "freeTestsCounter": {
+    "freeLivesCounter": {
       "type": "integer",
       "default": 0
     },
-    "freeTests": {
-      "type": "integer",
-      "default": 0
+    "FreePremActivated": {
+      "type": "boolean",
+      "default": false
     },
-    "freeReports": {
+    "isTestPassed": {
+      "type": "boolean",
+      "default": false
+    },
+    "lives": {
       "type": "integer",
-      "default": 0
+      "required": true,
+      "default": 3
+    },
+    "lastDailyCheck": {
+      "type": "datetime"
     }
   }
 }

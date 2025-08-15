@@ -13,6 +13,7 @@ export const TestList = () => {
   const total = useCompletedTestsStore((store) => store.total);
   const loading = useCompletedTestsStore((store) => store.loading);
   const { t } = useTranslation();
+  console.log("tests", tests);
 
   useEffect(() => {
     loadLastCompletedTests();
@@ -32,7 +33,7 @@ export const TestList = () => {
           </>
         ) : (
           tests.map((test) => (
-            <Link to={`/result/${test.testId}`}>
+            <Link to={`/profile/result/${test.testId}`}>
               <TestCard
                 key={test.testId}
                 name={test.test.name}

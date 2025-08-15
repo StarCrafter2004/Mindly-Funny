@@ -5,5 +5,8 @@ export type {
   TestResponse,
   AnswerRecord,
   AnswerResult,
+  TestResultPayload,
+  ThresholdAnswerResult,
+  questionAnswer,
+  Media,
 } from "./model/types";
-export { useAnswerResults } from "./lib/useAnswerResults";

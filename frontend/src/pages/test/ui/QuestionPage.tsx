@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import { PrimaryButton } from "@/shared/components";
 import ChevronDown from "@/shared/assets/icons/chevron-down.svg?react";
 import { ProgressBarWithTimer } from "./ProgressBarWithTimer";
+import preparing from "@/shared/assets/img/preparing.png";
 import {
   clearCustomBackHandler,
   setCustomBackHandler,
@@ -15,8 +16,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useProfileStore } from "@/entities/user/model/fillProfileStore";
 import { popup } from "@telegram-apps/sdk";
 import { useTranslation } from "react-i18next";
+import { createTestResultByDocumentId } from "@/entities/test/api";
+import { decrementLife } from "../api";
 
 export const QuestionPage = () => {
+  const [isFinished, setIsFinished] = useState<boolean>(false);
+
   const { t } = useTranslation();
   // ─────────────── Refs ───────────────
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -28,17 +33,21 @@ export const QuestionPage = () => {
   // ─────────────── Profile ───────────────
   const isProfileComplete = useProfileStore((s) => s.isProfileComplete);
   const setRedirectAfterFill = useProfileStore((s) => s.setRedirectToAfterFill);
+  const isTestPassed = useProfileStore((store) => store.isTestPassed);
+  console.log("isTestPassed", isTestPassed);
 
   // ─────────────── Test Store ───────────────
   const answerQuestion = useTestStore((s) => s.answerQuestion);
   const nextQuestion = useTestStore((s) => s.nextQuestion);
-  const isFinished = useTestStore((s) => s.isFinished);
+
   const fetchTestByDocumentId = useTestStore((s) => s.fetchTestByDocumentId);
   const questions = useTestStore((s) => s.questions);
   const currentQuestionIndex = useTestStore((s) => s.currentQuestionIndex);
   const loading = useTestStore((s) => s.loading);
+  const [resultsLoading, setResultsLoading] = useState<boolean>(false);
   const setDefault = useTestStore((s) => s.setDefault);
   const images = useTestStore((s) => s.Images);
+
   // ─────────────── State ───────────────
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [exitModalOpen, setExitModalOpen] = useState(false);
@@ -84,18 +93,6 @@ export const QuestionPage = () => {
   useEffect(() => {
     if (documentId) fetchTestByDocumentId(documentId);
   }, [documentId, fetchTestByDocumentId]);
-
-  useEffect(() => {
-    if (isFinished) {
-      const path = `/test/${documentId}/result`;
-      if (isProfileComplete) {
-        navigate(path);
-      } else {
-        setRedirectAfterFill(path);
-        navigate("/profile/fill");
-      }
-    }
-  }, [isFinished, isProfileComplete, documentId]);
 
   useEffect(() => {
     setImageLoaded(false);
@@ -148,10 +145,31 @@ export const QuestionPage = () => {
   }, []);
 
   // ─────────────── Handlers ───────────────
-  const handleNext = () => {
+  const handleNext = async () => {
     if (selectedAnswer === null || !question) return;
     answerQuestion(selectedAnswer);
-    nextQuestion();
+    if (currentQuestionIndex < questions.length - 1 && !isFinished) {
+      nextQuestion();
+    } else {
+      setResultsLoading(true);
+
+      console.log("finished");
+      const answers = useTestStore.getState().answers;
+      await createTestResultByDocumentId(documentId, answers);
+      await decrementLife();
+      setDefault();
+      const path = `/result/${documentId}`;
+      if (isProfileComplete) {
+        navigate(path);
+      } else {
+        setRedirectAfterFill(path);
+        navigate("/profile/fill");
+      }
+    }
+
+    if (!isTestPassed) {
+      api.post("/api/referrals/increment");
+    }
     setSelectedAnswer(null);
   };
 
@@ -165,7 +183,7 @@ export const QuestionPage = () => {
           className="scrollbar-hide disable-scr overflow-y-auto px-[16px] pt-[16px] pb-[140px]"
         >
           {/* Progress bar + timer */}
-          <ProgressBarWithTimer />
+          <ProgressBarWithTimer setIsFinished={setIsFinished} />
 
           {/* Image + Skeleton */}
           {currentImageUrl && (
@@ -256,6 +274,18 @@ export const QuestionPage = () => {
           onExit={setDefault}
           onClose={() => setExitModalOpen(false)}
         />
+      )}
+
+      {resultsLoading && (
+        <div className="bg-surface-primary fixed inset-0 z-50 flex w-full flex-col items-center justify-center">
+          <img className="mb-[8px] w-[80%]" src={preparing} alt="" />
+          <div className="text-text-primary mb-[4px] text-[24px] font-semibold">
+            {t("results.preparing")}
+          </div>
+          <div className="text-text-secondary text-[16px] font-normal">
+            {t("results.analyzing")}
+          </div>
+        </div>
       )}
     </>
   );

@@ -1,9 +1,7 @@
 import bg from "@/shared/assets/img/share-bg.png";
 import X from "@/shared/assets/icons/close.svg?react";
-import { useRef, useState, type FC } from "react";
+import { useRef, useState, type FC, type ReactNode } from "react";
 
-import { Swiper, SwiperSlide } from "swiper/react";
-import { ShareCard, type ShareCardProps } from "./ShareCard";
 import { PrimaryButton } from "@/shared/components";
 import { useTranslation } from "react-i18next";
 import { toJpeg } from "html-to-image";
@@ -13,13 +11,12 @@ import { shareStory } from "@telegram-apps/sdk";
 import type { Media } from "@/entities/test/model/types";
 
 type ShareModalProps = {
-  options: ShareCardProps[];
   onClose: () => void;
+  children: ReactNode;
 };
 
-export const ShareModal: FC<ShareModalProps> = ({ options, onClose }) => {
+export const ShareModal: FC<ShareModalProps> = ({ children, onClose }) => {
   const imageRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState<number>(0);
   const shareImageReady = useAppStore((store) => store.shareImageReady);
   const setShareImageReady = useAppStore((store) => store.setShareImageReady);
   const baseUrl = api.defaults.baseURL;
@@ -78,7 +75,9 @@ export const ShareModal: FC<ShareModalProps> = ({ options, onClose }) => {
 
   const { t } = useTranslation();
   return (
-    <div className="bg-surface-primary relative z-10 h-[100vh] overflow-hidden rounded-t-[24px] pt-[16px] pb-[48px]">
+    <div
+      className={`bg-surface-primary relative z-10 h-[100vh] overflow-hidden rounded-t-[24px] pt-[16px] pb-[48px]`}
+    >
       {loading && <div className="absolute inset-0 z-15 bg-black/20"></div>}
       <button
         onClick={onClose}
@@ -86,16 +85,6 @@ export const ShareModal: FC<ShareModalProps> = ({ options, onClose }) => {
       >
         <X className="text-outline-primary h-[24px] w-[24px]" />
       </button>
-      <div className="absolute top-[98px] flex w-full justify-center">
-        <div className="bg-surface-primary flex items-center justify-center gap-[8px] rounded-[50px] p-[8px]">
-          {options.map((_item, i) => (
-            <div
-              key={i}
-              className={`h-[8px] w-[8px] rounded-[50%] ${i === activeIndex ? "bg-surface-brand" : "bg-surface-secondary"}`}
-            />
-          ))}
-        </div>
-      </div>
 
       <div
         ref={imageRef}
@@ -103,31 +92,8 @@ export const ShareModal: FC<ShareModalProps> = ({ options, onClose }) => {
       >
         <div className="bg-surface-primary pointer-events-none absolute inset-0 -z-3"></div>
         <img className="absolute -z-1 w-full" src={bg} alt="" />
-        <div className="bg-surface-inversed/10 pointer-events-none absolute inset-0 -z-2">
-          {" "}
-        </div>
-        <Swiper
-          className="swiper z-3 w-full bg-inherit"
-          slidesPerView={1}
-          centeredSlides
-          onSlideChange={(swiper) => {
-            console.log("Active slide index:", swiper.activeIndex);
-            // Можно сохранять в state:
-            setActiveIndex(swiper.activeIndex);
-          }}
-          onSwiper={(swiper) => console.log(swiper)}
-        >
-          {options.map((slide, i) => (
-            <SwiperSlide className="!flex justify-center">
-              <ShareCard
-                key={i}
-                image={slide.image}
-                title={slide.title}
-                description={slide.description}
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <div className="bg-surface-inversed/10 pointer-events-none absolute inset-0 -z-2"></div>
+        {children}
       </div>
       <div className="absolute bottom-[48px] flex w-full flex-col items-center p-[16px]">
         {" "}

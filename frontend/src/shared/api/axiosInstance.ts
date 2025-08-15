@@ -1,4 +1,5 @@
 import { useUserStore } from "@/entities/user";
+import { useProfileStore } from "@/entities/user/model/fillProfileStore";
 import axios from "axios";
 
 const api = axios.create({
@@ -19,25 +20,16 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response) => response,
-  // (error) => {
-  //   if (isAxiosError(error)) {
-  //     if (error.response) {
-  //       // Попытка взять понятное сообщение из тела ответа (можно подстроить под API)
-  //       const data = error.response.data;
-  //       const message =
-  //         (data && (data.message || data.error || data.detail)) ||
-  //         `Ошибка сервера: ${error.response.status}`;
-  //       return Promise.reject(new Error(message));
-  //     } else {
-  //       // Нет ответа от сервера — сетевая ошибка, таймаут и т.п.
-  //       return Promise.reject(new Error(`Сетевая ошибка: ${error.message}`));
-  //     }
-  //   }
-  //   // Ошибка не из axios, прокидываем как Error
-
-  //   return Promise.reject(new Error(error?.message || "Неизвестная ошибка"));
-  // },
+  (res) => {
+    const setPremium = useProfileStore.getState().setPremium;
+    console.log("premium", res.data);
+    console.log("premium", res.data?._userStatus?.premiumStatus);
+    if (res.data?._userStatus?.premiumStatus) {
+      setPremium(res.data?._userStatus?.premiumStatus);
+    }
+    return res;
+  },
+  (err) => Promise.reject(err),
 );
 
 export { api };

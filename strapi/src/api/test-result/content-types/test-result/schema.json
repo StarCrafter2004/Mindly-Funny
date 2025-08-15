@@ -19,14 +19,10 @@
       "type": "string",
       "required": true
     },
-    "AnswerRecords": {
+    "answerRecords": {
       "type": "component",
       "component": "shared.answer-record",
       "repeatable": true,
-      "required": true
-    },
-    "iq": {
-      "type": "integer",
       "required": true
     }
   }

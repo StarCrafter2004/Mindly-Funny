@@ -26,5 +26,13 @@ exports.default = {
                 auth: false, // если не нужна авторизация, иначе поставь true
             },
         },
+        {
+            method: "GET",
+            path: "/tests/client",
+            handler: "test.clientfindMany",
+            config: {
+                auth: false, // если не нужна авторизация, иначе поставь true
+            },
+        },
     ],
 };

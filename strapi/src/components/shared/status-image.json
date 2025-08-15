@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_status_images",
+  "info": {
+    "displayName": "StatusImage"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "index": {
+      "type": "integer"
+    }
+  },
+  "config": {}
+}

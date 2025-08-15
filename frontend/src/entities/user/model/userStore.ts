@@ -21,6 +21,7 @@ type UserStore = {
 
 const launchParams = retrieveLaunchParams(true);
 const initDataRaw = retrieveRawInitData();
+console.log(initDataRaw);
 
 const rawUser = launchParams.tgWebAppData?.user as User | undefined;
 let user: User | null = null;

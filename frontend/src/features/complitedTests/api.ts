@@ -10,7 +10,7 @@ export const getTestResultsByTelegramId = async (
   telegramId: number,
 ): Promise<{ data: TestResult[]; meta: { pagination: { total: number } } }> => {
   const res = await api.get<TestResultResponse>(
-    `/api/test-results?filters[telegram_id][$eq]=${telegramId}&sort=createdAt:desc&populate=AnswerRecords`,
+    `/api/test-results?filters[telegram_id][$eq]=${telegramId}&sort=createdAt:desc&populate=answerRecords`,
   );
 
   return res.data;
@@ -46,7 +46,7 @@ export const getLastTestResultsByTelegramId = async (
   limit: number = 3,
 ): Promise<{ data: TestResult[]; meta: { pagination: { total: number } } }> => {
   const res = await api.get<TestResultResponse>(
-    `/api/test-results?filters[telegram_id][$eq]=${telegramId}&sort=createdAt:desc&pagination[limit]=${limit}&sort=createdAt:desc&populate=AnswerRecords`,
+    `/api/test-results?filters[telegram_id][$eq]=${telegramId}&sort=createdAt:desc&pagination[limit]=${limit}&sort=createdAt:desc&populate=answerRecords`,
   );
 
   return res.data;

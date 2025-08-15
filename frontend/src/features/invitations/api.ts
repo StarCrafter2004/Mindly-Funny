@@ -78,9 +78,9 @@ export const getGiftsCounter = async () => {
   const userId = useUserStore.getState()?.user?.id;
 
   const res = await api.get<{
-    data: { freeReportsCounter: number; freeTestsCounter: number }[];
+    data: { freeLivesCounter: number; freePremiumCounter: number }[];
   }>(
-    `/api/t-users?filters[telegram_id][$eq]=${userId}&fields[0]=freeReportsCounter&fields[1]=freeTestsCounter`,
+    `/api/t-users?filters[telegram_id][$eq]=${userId}&fields[0]=freeLivesCounter&fields[1]=freePremiumCounter`,
   );
 
   return res.data.data[0];
@@ -88,16 +88,20 @@ export const getGiftsCounter = async () => {
 
 export const getConfig = async () => {
   const res = await api.get<{
-    data: { FreeReportCost: number; FreeTestCost: number };
+    data: { FreeLivesCost: number; FreePremiumCost: number };
   }>(`/api/gift-config`);
   return res.data.data;
 };
 
-export const updateFreeReportCounter = async () => {
-  const res = await api.post("/api/free-reports");
-  return res;
+export const updateFreePremCounter = async () => {
+  const res = await api.post<{
+    data: {
+      FreePremActivated: boolean;
+    };
+  }>("/api/free-prem");
+  return res.data.data.FreePremActivated;
 };
-export const updateFreeTestCounter = async () => {
-  const res = await api.post("/api/free-tests");
+export const updateFreeLivesCounter = async () => {
+  const res = await api.post("/api/free-lives");
   return res;
 };

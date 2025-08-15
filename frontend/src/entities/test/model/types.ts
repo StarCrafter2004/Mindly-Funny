@@ -1,9 +1,3 @@
-export type Answer = {
-  id: number;
-  text: string;
-  isCorrect: boolean;
-};
-
 export type MediaFormat = {
   ext: string; // Расширение файла, например ".png"
   url: string; // URL к изображению в этом формате
@@ -90,11 +84,14 @@ export type TestResponse = {
   };
 };
 
+export type TestResultPayload = {
+  telegram_id: number;
+  testId: string;
+};
+
 export type AnswerRecord = {
   questionIndex: number;
   answerIndex: number;
-  isCorrect: boolean;
-  correctAnswerIndex: number;
 };
 
 export type AnswerResult = {
@@ -102,4 +99,30 @@ export type AnswerResult = {
   userAnswer?: string;
   correctAnswer: string;
   isCorrect: boolean;
+};
+
+export type ThresholdAnswerResult = {
+  question: string;
+  userAnswer: string;
+};
+
+export type Answer = {
+  text: string;
+  isCorrect: boolean | null;
+  statusIndex: number | null;
+};
+
+export type questionAnswer = {
+  question: string;
+  answer: Answer;
+  correctAnswer: Answer;
+  isCorrect: boolean | null;
+};
+
+export type TestResult = {
+  type: string | null;
+  status: string | null;
+  description: string | null;
+  questionAnswers: questionAnswer[];
+  image: Media;
 };

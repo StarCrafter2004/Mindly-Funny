@@ -8,7 +8,7 @@ interface Payment {
   documentId: string;
   userId: number;
   payload: string;
-  type: "premium" | "test" | "result";
+  type: "premium" | "test" | "lives";
   extra: string;
   amount: number;
   currency: string;
@@ -110,8 +110,16 @@ export function startBot() {
         return ctx.answerPreCheckoutQuery(false, "тест уже куплен");
       }
 
-      if (type === "premium" && premiumRes.data.length > 0) {
-        return ctx.answerPreCheckoutQuery(false, "премиум уже куплен");
+      if (type === "premium") {
+        const user = userRes?.data?.data?.[0];
+        if (!user) {
+          return ctx.answerPreCheckoutQuery(false, "Пользователь не найден");
+        }
+
+        const premiumUntil = user.attributes?.premiumUntil;
+        if (premiumUntil && new Date(premiumUntil) > new Date()) {
+          return ctx.answerPreCheckoutQuery(false, "Премиум ещё действует");
+        }
       }
 
       return await ctx.answerPreCheckoutQuery(true);
@@ -146,18 +154,59 @@ export function startBot() {
 
 async function setPurchase(payload: string) {
   const [userId, type, extra] = payload.split("-");
-  if (type === "premium") {
-    api.put(`/api/t-users/update-premium/${userId}`, {
-      data: {
-        isPremium: true,
-      },
-    });
+  console.log("extra", extra);
+  console.log(userId, type, extra);
+
+  try {
+    if (type === "premium") {
+      const now = new Date();
+      const premiumUntil = new Date(now.setMonth(now.getMonth() + 1));
+
+      try {
+        await api.put(`/api/t-users/update-premium/${userId}`, {
+          data: {
+            isPremium: true,
+            premiumUntil: premiumUntil.toISOString(),
+          },
+        });
+      } catch (err) {
+        console.error("[ERROR] update-premium failed:", err);
+      }
+    }
+
+    if (type === "lives") {
+      try {
+        await api.post(`/api/increment-life`, {
+          userId,
+          quantity: extra,
+        });
+      } catch (err) {
+        console.error("[ERROR] increment-life failed:", err);
+      }
+    }
+
+    try {
+      await api.put(`/api/payment/update-payment`, {
+        payload,
+        payment_status: "payd",
+      });
+    } catch (err) {
+      console.error("[ERROR] update-payment failed:", err);
+    }
+
+    try {
+      const res = await api.post("/api/purchases", {
+        data: {
+          userId,
+          type,
+          extra,
+        },
+      });
+      console.log("[PURCHASE SAVED]", res.data);
+    } catch (err) {
+      console.error("[ERROR] save purchase failed:", err);
+    }
+  } catch (err) {
+    console.error("[CRITICAL] setPurchase crashed:", err);
   }
-  const res = await api.post("/api/purchases", {
-    data: {
-      userId,
-      type,
-      extra,
-    },
-  });
 }

@@ -4,7 +4,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { CHAIN, useTonAddress, useTonConnectUI } from "@tonconnect/ui-react";
 
-type PurchaseType = "test" | "result" | "premium";
+type PurchaseType = "test" | "lives" | "premium";
 
 type RequestInvoiceArgs = {
   title?: string;
@@ -12,6 +12,7 @@ type RequestInvoiceArgs = {
   amount: number; // в копейках
   type: PurchaseType;
   testId?: string;
+  quantity?: number;
   duration?: number;
 };
 
@@ -24,6 +25,7 @@ export async function requestInvoice({
   type,
   testId,
   duration,
+  quantity,
 }: RequestInvoiceArgs): Promise<InvoiceStatus> {
   try {
     const resp = await api.post("/bot/create-invoice", {
@@ -33,8 +35,9 @@ export async function requestInvoice({
       type,
       testId,
       duration,
+      quantity,
     });
-
+    console.log("quantity", quantity);
     const { invoiceUrl } = resp.data as { invoiceUrl: string };
 
     if (!invoice.open.isAvailable()) {
@@ -66,13 +69,20 @@ type PayParams = {
   type: PurchaseType;
   testId?: string;
   duration?: number;
+  quantity?: number;
 };
 
 export const useTonPay = () => {
   const userAddress = useTonAddress();
   const [tonConnectUI] = useTonConnectUI();
 
-  const pay = async ({ amount, type, testId, duration }: PayParams) => {
+  const pay = async ({
+    amount,
+    type,
+    testId,
+    duration,
+    quantity,
+  }: PayParams) => {
     const address = await api
       .get<{ data: { wallet: string } }>(`/api/ton-config`)
       .then((res) => res.data.data.wallet);
@@ -90,11 +100,12 @@ export const useTonPay = () => {
         type,
         testId,
         duration,
+        quantity,
         wallet: userAddress,
       })
       .then((res) => ({ payload: res.data.payload, boc: res.data.boc }))
       .catch();
-
+    console.log("quantity", quantity);
     if (!boc) {
       return { status: "server_error" };
     }

@@ -45,7 +45,7 @@ export const PricingCard: FC<PricingCardProps> = ({
           </button>
         </div>
 
-        <div className="mb-[16px]">{children}</div>
+        <div>{children}</div>
 
         <div>
           {stars !== undefined && (

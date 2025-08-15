@@ -5,7 +5,7 @@ import { LanguageSelect } from "@/pages/languageSelect";
 import { MainPage } from "@/pages/main";
 import { Profile } from "@/pages/profile";
 import { Settings } from "@/pages/settings";
-import { ProfileTestResult, QuestionPage, ResultPage } from "@/pages/test";
+import { QuestionPage } from "@/pages/test";
 import { ThemeSelect } from "@/pages/themeSelect";
 import { Welcome } from "@/pages/welcome";
 import { MainLayout } from "@/widgets/mainLayout/";
@@ -25,6 +25,8 @@ import { toPng } from "html-to-image";
 import { preload } from "react-dom";
 import { ASSET_IMAGES } from "./utils/preloadAssets.ts";
 import { useConfigStore } from "@/shared/config/appConfigStore.ts";
+import { ResultPage } from "@/pages/result/ui/ResultPage.tsx";
+import { AllResults } from "@/pages/result/index.ts";
 
 init();
 
@@ -43,7 +45,6 @@ function App() {
   );
 
   const fetchProfile = useProfileStore((store) => store.fetchProfile);
-  const telegramId = useUserStore((store) => store.user)?.id;
   const firstName = useUserStore((store) => store.user)?.firstName;
   const lastName = useUserStore((store) => store.user)?.lastName;
   const username = useUserStore((store) => store.user)?.username;
@@ -55,7 +56,7 @@ function App() {
   const fetchProfession = useProfileStore((store) => store.fetchProfession);
   const noBackButtonPaths = ["/", "/main", "/profile", "/settings"];
   const loadAppConfig = useConfigStore((store) => store.loadConfig);
-
+  const loadFilters = useConfigStore((store) => store.loadFilters);
   const showBackButton = !noBackButtonPaths.includes(location.pathname);
 
   useEffect(() => {
@@ -63,13 +64,12 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (telegramId) {
-      fetchProfile(firstName, lastName, username);
-    }
+    fetchProfile(firstName, lastName, username);
     fetchLanguageOptions();
     fetchCountry();
     fetchProfession();
     loadAppConfig();
+    loadFilters();
   }, []);
 
   useEffect(() => {
@@ -90,14 +90,15 @@ function App() {
           </Route>
         </Route>
         <Route path="test/:id" element={<QuestionPage />} />
-        <Route path="test/:id/result" element={<ResultPage />} />
+        <Route path="result/:id" element={<ResultPage />} />
+        <Route path="/profile/result/:id" element={<ResultPage />} />
+        <Route path="/all-answers" element={<AllResults />} />
+
         <Route path="profile/completed-tests" element={<CompletedTests />} />
         <Route path="profile/invitations" element={<InvitationsPage />} />
-
         <Route path="profile/fill" element={<FillProfile />} />
         <Route path="profile/fill/profession" element={<Profession />} />
         <Route path="profile/fill/country" element={<Country />} />
-        <Route path="result/:id" element={<ProfileTestResult />} />
       </Routes>
       {showBackButton && <BackButton />}
     </div>

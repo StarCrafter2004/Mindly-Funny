@@ -1,114 +1,119 @@
 import { factories } from "@strapi/strapi";
+import test from "../../test/controllers/test";
 
-type IQItem = { name: string; iq: number };
-
+type Type = "status-with-threshold" | "status-per-answer";
 export default factories.createCoreController("api::test-result.test-result", ({ strapi }) => ({
-  async countByRegion(ctx) {
-    const { testId, iq, country } = ctx.query;
-    if (!testId || !iq || !country) {
-      return ctx.badRequest("Missing testId, iq or country");
+  async getTestResultWithStats(ctx) {
+    const { id: documentId } = ctx.params;
+    const locale = (ctx.query.locale as string) || "en";
+    const userId = ctx.state.userId;
+
+    // Получаем тест с нужной локалью
+    const testResponse = await strapi.documents("api::test.test").findOne({
+      documentId,
+      populate: {
+        questions: {
+          populate: {
+            answers: true,
+          },
+        },
+        statuses: true,
+        statusImages: {
+          populate: {
+            image: true,
+          },
+        },
+        tresholds: true,
+      },
+      fields: "type",
+      locale,
+    });
+
+    // Если не нашли тест — возвращаем 404, но без падения
+    if (!testResponse) {
+      return ctx.notFound("Test not found for the requested locale.");
     }
 
-    const users = await strapi.entityService.findMany("api::t-user.t-user", {
-      filters: { country },
-      fields: ["telegram_id"],
-      limit: 1000,
+    const type = testResponse.type as Type;
+
+    const testResult = await strapi.documents("api::test-result.test-result").findFirst({
+      filters: {
+        testId: documentId,
+        telegram_id: userId,
+      },
+      populate: {
+        answerRecords: true,
+      },
     });
 
-    const telegramIds = users.map((u) => u.telegram_id);
-
-    const total = await strapi.entityService.count("api::test-result.test-result", {
-      filters: { testId, telegram_id: { $in: telegramIds } },
-    });
-
-    const lowerCount = await strapi.entityService.count("api::test-result.test-result", {
-      filters: { testId, iq: { $lt: Number(iq) }, telegram_id: { $in: telegramIds } },
-    });
-
-    let percent = total === 0 ? 0 : Math.round((lowerCount / total) * 100);
-    percent = total === 1 ? 100 : percent;
-    return { total, lowerCount, percent };
-  },
-
-  async countByAge(ctx) {
-    const { testId, iq, age } = ctx.query;
-    if (!testId || !iq || !age) {
-      return ctx.badRequest("Missing testId, iq or age");
+    if (!testResult) {
+      return ctx.notFound("Test result not found.");
     }
 
-    const users = await strapi.entityService.findMany("api::t-user.t-user", {
-      filters: { age },
-      fields: ["telegram_id"],
-      limit: 1000,
+    const questionAnswers = testResponse.questions.map((question, i) => {
+      const userRecord = testResult.answerRecords[i];
+      const userAnswer = question.answers?.[userRecord.answerIndex];
+      const correctAnswer = question.answers?.find((a) => a.isCorrect);
+
+      const base = {
+        question: question.text,
+        answer: userAnswer,
+      };
+
+      if (type === "status-with-threshold") {
+        return {
+          ...base,
+          isCorrect: userAnswer?.isCorrect ?? false,
+          correctAnswer: correctAnswer ?? null,
+        };
+      }
+
+      return base;
     });
 
-    const telegramIds = users.map((u) => u.telegram_id);
+    let statusIndex = 0;
 
-    const total = await strapi.entityService.count("api::test-result.test-result", {
-      filters: { testId, telegram_id: { $in: telegramIds } },
-    });
+    if (type === "status-with-threshold") {
+      const correctCount =
+        testResult.answerRecords?.filter((r) => {
+          const q = testResponse.questions![r.questionIndex!];
+          const ans = q.answers?.[r.answerIndex!];
+          return ans?.isCorrect;
+        }).length ?? 0;
 
-    const lowerCount = await strapi.entityService.count("api::test-result.test-result", {
-      filters: { testId, iq: { $lt: Number(iq) }, telegram_id: { $in: telegramIds } },
-    });
+      const thresholds = testResponse.tresholds;
 
-    let percent = total === 0 ? 0 : Math.round((lowerCount / total) * 100);
-    percent = total === 1 ? 100 : percent;
-    return { total, lowerCount, percent };
-  },
-
-  async countByProfession(ctx) {
-    const { testId, iq, profession } = ctx.query;
-    if (!testId || !iq || !profession) {
-      return ctx.badRequest("Missing testId, iq or profession");
+      statusIndex =
+        thresholds?.reduce((acc, th) => {
+          return correctCount >= th.minCorrect ? th.statusIndex : acc;
+        }, 0) ?? 0;
+    } else {
+      const freq: Record<number, number> = {};
+      testResult.answerRecords?.forEach((r) => {
+        const q = testResponse.questions![r.questionIndex!];
+        const ans = q.answers?.[r.answerIndex!];
+        const idx = ans?.statusIndex;
+        if (typeof idx === "number") {
+          freq[idx] = (freq[idx] || 0) + 1;
+        }
+      });
+      statusIndex = Object.entries(freq).reduce(
+        (maxIdx, [idx, count]) => (count > (freq[maxIdx] || 0) ? Number(idx) : maxIdx),
+        0
+      );
     }
 
-    const users = await strapi.entityService.findMany("api::t-user.t-user", {
-      filters: { profession },
-      fields: ["telegram_id"],
-      limit: 1000,
-    });
+    const selectedStatus = testResponse.statuses?.find((s) => s.statusIndex === statusIndex);
+    const selectedImage = testResponse.statusImages?.find((img) => img.index === statusIndex) ?? null;
 
-    const telegramIds = users.map((u) => u.telegram_id);
-
-    const total = await strapi.entityService.count("api::test-result.test-result", {
-      filters: { testId, telegram_id: { $in: telegramIds } },
-    });
-
-    const lowerCount = await strapi.entityService.count("api::test-result.test-result", {
-      filters: { testId, iq: { $lt: Number(iq) }, telegram_id: { $in: telegramIds } },
-    });
-
-    let percent = total === 0 ? 0 : Math.round((lowerCount / total) * 100);
-    percent = total === 1 ? 100 : percent;
-    return { total, lowerCount, percent };
-  },
-
-  async countByCelebrity(ctx) {
-    const { iq } = ctx.query as { iq: number };
-
-    if (!iq) {
-      return ctx.badRequest("Missing testId, iq or profession");
-    }
-    const result = await strapi.documents("api::celebrity.celebrity").findFirst();
-    console.log("result1", result);
-
-    const celebrites = result.iqs as IQItem[];
-
-    const celebrity = findMaxBelow(celebrites, iq);
-    console.log(celebrity);
-
-    return { data: celebrity };
+    return {
+      data: {
+        status: selectedStatus?.name ?? "",
+        description: selectedStatus?.description ?? "",
+        type,
+        questionAnswers,
+        image: selectedImage?.image ?? null,
+      },
+    };
   },
 }));
-
-function findMaxBelow(arr: IQItem[], threshold: number) {
-  // Фильтруем тех, у кого maxIQ < threshold
-  const filtered = arr.filter((o) => o.iq < threshold);
-  console.log("filtered", filtered);
-  if (filtered.length === 0) return null;
-  // Находим максимальный maxIQ среди отфильтрованных
-  const maxVal = Math.max(...filtered.map((o) => o.iq));
-  // Возвращаем первую запись с этим maxIQ
-  return filtered.find((o) => o.iq === maxVal);
-}

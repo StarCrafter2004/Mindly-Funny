@@ -7,13 +7,23 @@ export default {
     },
     {
       method: "POST",
-      path: "/free-reports",
-      handler: "t-user.updateFreeReportCounter",
+      path: "/free-prem",
+      handler: "t-user.updateFreePremium",
     },
     {
       method: "POST",
-      path: "/free-tests",
-      handler: "t-user.updateFreeTestCounter",
+      path: "/free-lives",
+      handler: "t-user.updateFreeLivesCounter",
+    },
+    {
+      method: "POST",
+      path: "/decrement-life",
+      handler: "t-user.decrementLife",
+    },
+    {
+      method: "POST",
+      path: "/increment-life",
+      handler: "t-user.incrementLife",
     },
   ],
 };

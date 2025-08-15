@@ -3,6 +3,34 @@
  */
 
 import { factories } from "@strapi/strapi";
+import { startOfDay, isBefore } from "date-fns";
+
+async function restoreDailyLives(user) {
+  const todayStart = startOfDay(new Date());
+
+  if (!user.lastDailyCheck || isBefore(new Date(user.lastDailyCheck), todayStart)) {
+    const minLives = await strapi
+      .documents("api::app-config.app-config")
+      .findFirst({ fields: ["minLives"] })
+      .then((res) => res.minLives);
+
+    // Восстанавливаем жизни до минимального уровня, если меньше
+    const livesToSet = Math.max(user.lives, minLives);
+
+    const updatedUser = await strapi.documents("api::t-user.t-user").update({
+      documentId: user.documentId,
+      data: {
+        lives: livesToSet,
+        lastDailyCheck: new Date().toISOString(),
+      },
+      fields: ["lives", "lastDailyCheck"],
+    });
+
+    return updatedUser;
+  }
+
+  return user;
+}
 
 export default factories.createCoreController("api::test.test", ({ strapi }) => ({
   async getUserTests(ctx) {
@@ -12,7 +40,6 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
     const sort = ctx.query.sort || "createdAt:desc";
     const locale = (ctx.query.locale as string) || "en";
     const filter = (ctx.query.filter as string) || "all";
-    console.log("filter", filter);
 
     const filtersMap = {
       all: {},
@@ -22,41 +49,12 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
       paid: {
         isTestFree: false,
       },
-      gift: {},
     };
-
-    const additional = {
-      isGift: false,
-    };
-
-    let maxGiftTests;
-
-    if (filter === "gift") {
-      additional.isGift = true;
-      maxGiftTests = await strapi
-        .documents("api::t-user.t-user")
-        .findFirst({
-          filters: {
-            telegram_id: userId,
-          },
-          fields: ["freeTests"],
-        })
-        .then((res) => res.freeTests);
-    }
-
-    const startIndex = (page - 1) * pageSize;
 
     let finalLimit = pageSize;
 
-    if (filter === "gift") {
-      // Обрезаем лимит так, чтобы не выйти за предел maxGiftTests
-      const remaining = Math.max(maxGiftTests - startIndex, 0);
-      finalLimit = Math.min(pageSize, remaining);
-    }
-    console.log(finalLimit);
+    const finalFilters = { ...filtersMap[filter] };
 
-    const finalFilters = { ...filtersMap[filter], ...additional };
-    console.log(finalFilters);
     const testsResponse = await strapi.documents("api::test.test").findMany({
       sort: ["createdAt:desc"],
       limit: finalLimit,
@@ -67,18 +65,19 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     const tests = testsResponse;
 
-    const isPremium = await strapi
-      .documents("api::t-user.t-user")
-      .findFirst({
-        filters: {
-          telegram_id: userId,
-        },
-        fields: ["isPremium"],
-      })
-      .then((res) => res.isPremium);
+    let user = await strapi.documents("api::t-user.t-user").findFirst({
+      filters: {
+        telegram_id: userId,
+      },
+      fields: ["isPremium", "lives", "lastDailyCheck"],
+    });
+    user = await restoreDailyLives(user);
+
+    const isPremium = user.isPremium;
+    const lives = user.lives;
 
     const paidTestIds = tests.filter((t) => !t.isTestFree).map((t) => t.documentId);
-    console.log("userId", userId);
+
     const purchases = await strapi.db.query("api::purchase.purchase").findMany({
       where: {
         userId: userId,
@@ -99,7 +98,6 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
       locale,
     });
 
-    console.log();
     /* 3. Считаем, сколько всего страниц */
     const pageCount = Math.ceil(total / pageSize);
     // Возвращаем данные с пагинацией
@@ -112,6 +110,7 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
         pageCount, // всего страниц
         hasNext: page < pageCount, // ← клиент сразу знает, подгружать ли дальше
       },
+      lives,
     };
   },
   async getPurchasedTests(ctx) {
@@ -121,11 +120,6 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
     const sort = ctx.query.sort || "createdAt:desc";
     const locale = (ctx.query.locale as string) || "en";
     const filter = (ctx.query.filter as string) || "all";
-    console.log("filter", filter);
-
-    const additional = {
-      isGift: false,
-    };
 
     const purchases = await strapi.documents("api::purchase.purchase").findMany({
       filters: { userId: userId, type: "test" },
@@ -133,11 +127,10 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
       limit: pageSize,
       start: (page - 1) * pageSize,
     });
-    console.log(purchases);
+
     const purchasesIds = purchases.filter((purchase) => purchase.type === "test").map((p) => p.extra);
 
-    const finalFilters = { ...{ documentId: { $in: purchasesIds } }, ...additional };
-    console.log("purchasesIds", purchasesIds);
+    const finalFilters = { ...{ documentId: { $in: purchasesIds } } };
 
     const testsResponse = await strapi.documents("api::test.test").findMany({
       sort: ["createdAt:desc"],
@@ -146,8 +139,6 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
     });
 
     const tests = testsResponse;
-
-    console.log("userId", userId);
 
     // Шаг 4: Добавляем флаг isPurchased к каждому тесту
     const mappedTests = tests.map((test) => ({
@@ -159,6 +150,16 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
       filters: { userId: userId, type: "test" },
       locale,
     });
+
+    let user = await strapi.documents("api::t-user.t-user").findFirst({
+      filters: {
+        telegram_id: userId,
+      },
+      fields: ["lives", "lastDailyCheck"],
+    });
+    user = await restoreDailyLives(user);
+
+    const lives = user.lives;
 
     /* 3. Считаем, сколько всего страниц */
     const pageCount = Math.ceil(total / pageSize);
@@ -172,6 +173,7 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
         pageCount, // всего страниц
         hasNext: page < pageCount, // ← клиент сразу знает, подгружать ли дальше
       },
+      lives,
     };
   },
 
@@ -183,9 +185,6 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     // 2. Вызов базового метода findOne
     const { data, meta } = await super.findOne(ctx);
-    console.log("data", data);
-    console.log("documentId", documentId);
-    console.log("userId", userId);
 
     // 3. Проверка покупки: ищем запись в таблице purchase
     const purchase = await strapi.documents("api::purchase.purchase").findMany({
@@ -194,7 +193,7 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
         extra: { $eq: documentId },
       },
     });
-    console.log("super");
+
     const isResultPurchased = purchase.length > 0 || data.isReportFree;
 
     // 4. Добавляем поле isPurchased в attributes
@@ -209,5 +208,21 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
     const { data, meta } = await super.findOne(ctx);
 
     return { data, meta };
+  },
+  async clientfindMany(ctx) {
+    const userId = ctx.state.userId;
+    const { data, meta } = await super.find(ctx);
+
+    let user = await strapi.documents("api::t-user.t-user").findFirst({
+      fields: ["lives", "lastDailyCheck"],
+      filters: {
+        telegram_id: userId,
+      },
+    });
+
+    user = await restoreDailyLives(user);
+    const lives = user.lives;
+
+    return { data, meta, lives };
   },
 }));

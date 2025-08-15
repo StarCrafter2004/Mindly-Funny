@@ -10,10 +10,10 @@ import { getGiftsCounter } from "../api";
 
 interface InvitationsState {
   invitations: Invitation[];
-  freeReportsCounter: number;
-  freeTestsCounter: number;
-  FreeReportCost: number;
-  FreeTestCost: number;
+  freeLivesCounter: number;
+  freePremiumCounter: number;
+  FreeLivesCost: number;
+  FreePremiumCost: number;
   loadingProfile: boolean;
   loadingPage: boolean;
   error: string | null;
@@ -28,10 +28,11 @@ export const useInvitationsStore = create<InvitationsState>((set) => ({
   loadingProfile: true,
   loadingPage: true,
   error: null,
-  freeTestsCounter: 0,
-  freeReportsCounter: 0,
-  FreeReportCost: 0,
-  FreeTestCost: 0,
+  freePremiumCounter: 0,
+  freeLivesCounter: 0,
+  FreeLivesCost: 0,
+  FreePremiumCost: 0,
+
   loadLastInvitations: async () => {
     set({ loadingProfile: true, error: null });
     const telegramId = useUserStore.getState().user?.id;
@@ -59,8 +60,8 @@ export const useInvitationsStore = create<InvitationsState>((set) => ({
         const counters = await getGiftsCounter();
         set({
           invitations,
-          freeReportsCounter: counters.freeReportsCounter,
-          freeTestsCounter: counters.freeTestsCounter,
+          freePremiumCounter: counters.freePremiumCounter,
+          freeLivesCounter: counters.freeLivesCounter,
         });
       }
     } catch (error) {
@@ -72,8 +73,8 @@ export const useInvitationsStore = create<InvitationsState>((set) => ({
   loadConfig: async () => {
     const res = await getConfig();
     set({
-      FreeReportCost: res.FreeReportCost,
-      FreeTestCost: res.FreeTestCost,
+      FreeLivesCost: res.FreeLivesCost,
+      FreePremiumCost: res.FreePremiumCost,
     });
   },
   clear: () => {

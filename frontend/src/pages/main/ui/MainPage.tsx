@@ -5,14 +5,16 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getTests } from "../api";
 import type { TestPreview } from "../model/types";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { OffersSlider } from "@/widgets/offersSlider";
 import { useTranslation } from "react-i18next";
 import { requestInvoice } from "@/features/payment";
 import { FilterSlider } from "@/widgets/filterSlider";
 import { useProfileStore } from "@/entities/user/model/fillProfileStore";
 import { useTonPay } from "@/features/payment/model/requestInvoice";
-import { PrimaryButton } from "@/shared/components";
+import Heart from "@/shared/assets/icons/heart.svg?react";
+import { useConfigStore } from "@/shared/config/appConfigStore";
+import { LivesCard } from "@/widgets/pricingCard/ui/LivesCard";
 
 export const MainPage = () => {
   const isPremium = useProfileStore((store) => store.isPremium);
@@ -31,6 +33,11 @@ export const MainPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const urlFilter = searchParams.get("filter") || "all";
   const [filter, setFilter] = useState<string>(urlFilter);
+  const filters = useConfigStore((store) => store.filters);
+  const lives = useProfileStore((store) => store.lives);
+  const setLives = useProfileStore((store) => store.setLives);
+  const [isBuyLivesModalOpen, setIsBuyLivesModalOpen] =
+    useState<boolean>(false);
 
   const fetchTests = async () => {
     try {
@@ -39,6 +46,7 @@ export const MainPage = () => {
 
       setTests((prev) => [...prev, ...res.data]);
       setHasNext(res.pagination.hasNext);
+      setLives(res.lives);
     } catch (e) {
       setError(true);
 
@@ -80,7 +88,7 @@ export const MainPage = () => {
   useEffect(() => {
     const onScroll = () => {
       const scrolledTo = window.scrollY + window.innerHeight;
-      const threshold = document.body.scrollHeight;
+      const threshold = document.body.scrollHeight - 300;
 
       if (scrolledTo >= threshold && hasNext && !loading) {
         setPage((prev) => prev + 1); // подгружаем следующую
@@ -92,6 +100,12 @@ export const MainPage = () => {
   }, [hasNext, loading]);
 
   const handleTestClick = (test: TestPreview) => {
+    if (lives <= 0) {
+      // Если нет жизней — открываем модалку покупки жизней
+      setIsBuyLivesModalOpen(true);
+      return;
+    }
+
     if (!test.isPurchased) {
       setSelectedTest(test);
       setIsTestModalOpen(true);
@@ -112,9 +126,21 @@ export const MainPage = () => {
             }}
           />
         )}
-        <div className="text-text-primary mb-[12px] px-[16px] text-[24px] font-semibold">
-          {t("main.title")}
+        <div className="flex flex-row justify-between px-[16px]">
+          <div className="text-text-primary mb-[12px] text-[24px] font-semibold">
+            {t("main.title")}
+          </div>
+          <div
+            onClick={() => setIsBuyLivesModalOpen(true)}
+            className="flex flex-row items-center gap-[4px]"
+          >
+            <Heart className="w-[24px]" />
+            <div className="text-text-error text-[16px] font-medium">
+              {lives} {lives === 1 ? t("main.live") : t("main.lives")}
+            </div>
+          </div>
         </div>
+
         <FilterSlider
           filter={filter}
           onFilterChange={(newFilter) => {
@@ -127,10 +153,13 @@ export const MainPage = () => {
           }}
           options={[
             { id: "all", label: t("main.all") },
-            { id: "free", label: t("main.free") },
-            { id: "paid", label: t("main.paid") },
+            // { id: "free", label: t("main.free") },
+            // { id: "paid", label: t("main.paid") },
             isPremium ? null : { id: "purchased", label: t("main.purchased") },
-            { id: "gift", label: t("main.gift") },
+            ...filters.map((filter) => ({
+              id: filter.name,
+              label: t(`filters.${filter.name}`),
+            })),
           ]}
         />
         <div className="px-[16px]">
@@ -153,18 +182,6 @@ export const MainPage = () => {
                 <div className="text-text-secondary text-[16px] font-normal">
                   {t("main.NullPurchased")}
                 </div>
-              ) : filter === "gift" && !loading ? (
-                <div className="flex flex-col gap-[12px]">
-                  <div className="text-text-secondary text-[16px] font-normal">
-                    {t("main.NullGift")}
-                  </div>
-                  <Link to={"/profile/invitations"}>
-                    <PrimaryButton className="text-text-inversed rounded-[16px] px-[16px] py-[12px] text-[16px] font-medium">
-                      {" "}
-                      {t("main.Invite")}{" "}
-                    </PrimaryButton>
-                  </Link>
-                </div>
               ) : null)}
             {loading && (
               <>
@@ -177,6 +194,32 @@ export const MainPage = () => {
         </div>
       </div>
       <AnimatePresence>
+        {isBuyLivesModalOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40 bg-black/40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsBuyLivesModalOpen(false)}
+            />
+
+            {/* Модалка снизу */}
+            <motion.div
+              className="fixed right-0 bottom-0 left-0 z-50"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+            >
+              <LivesCard
+                onClose={() => {
+                  setIsBuyLivesModalOpen(false);
+                }}
+              />
+            </motion.div>
+          </>
+        )}
         {isPremiumModalOpen && (
           <>
             {/* Полупрозрачный фон */}
@@ -259,6 +302,7 @@ export const MainPage = () => {
               >
                 {" "}
                 <TestCard
+                  className="mb-[16px]"
                   key={selectedTest?.id}
                   name={selectedTest?.name}
                   description={selectedTest?.description}

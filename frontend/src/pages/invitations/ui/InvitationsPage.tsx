@@ -1,8 +1,8 @@
 import { Invitation } from "@/entities/invitation";
 import { useProfileStore } from "@/entities/user/model/fillProfileStore";
 import {
-  updateFreeReportCounter,
-  updateFreeTestCounter,
+  updateFreeLivesCounter,
+  updateFreePremCounter,
 } from "@/features/invitations/api";
 import { useInvitationsStore } from "@/features/invitations/model/invitationsStore";
 import { ProgressBar } from "@/shared/components";
@@ -17,22 +17,28 @@ export const InvitationsPage = () => {
   const fetchProfile = useProfileStore((store) => store.fetchProfile);
 
   const invitations = useInvitationsStore((store) => store.invitations);
-  const freeReportsCounter = useInvitationsStore(
-    (store) => store.freeReportsCounter,
+  const freePremiumCounter = useInvitationsStore(
+    (store) => store.freePremiumCounter,
   );
-  const freeTestsCounter = useInvitationsStore(
-    (store) => store.freeTestsCounter,
+  const freeLivesCounter = useInvitationsStore(
+    (store) => store.freeLivesCounter,
   );
+
+  const FreePremActivated = useProfileStore((store) => store.FreePremActivated);
+  const setFreePremActivated = useProfileStore(
+    (store) => store.setFreePremActivated,
+  );
+
   const loadConfig = useInvitationsStore((store) => store.loadConfig);
-  const FreeReportCost = useInvitationsStore((store) => store.FreeReportCost);
-  const FreeTestCost = useInvitationsStore((store) => store.FreeTestCost);
+  const FreeLivesCost = useInvitationsStore((store) => store.FreeLivesCost);
+  const FreePremiumCost = useInvitationsStore((store) => store.FreePremiumCost);
 
   const loadAllInvitations = useInvitationsStore(
     (store) => store.loadAllInvitations,
   );
   const loading = useInvitationsStore((store) => store.loadingPage);
-  const [onReportLoading, setOnReportLoading] = useState<boolean>(false);
-  const [onTestLoading, setOnTestLoading] = useState<boolean>(false);
+  const [onPremiumLoading, setOnPremiumtLoading] = useState<boolean>(false);
+  const [onLivesLoading, setOnLivesLoading] = useState<boolean>(false);
 
   const onLoad = async () => {
     await loadConfig();
@@ -62,36 +68,39 @@ export const InvitationsPage = () => {
             ) : (
               <>
                 {" "}
+                {!FreePremActivated && (
+                  <ProgressBar
+                    label={`👑 ${t("invitations.freePremium")}`}
+                    max={FreePremiumCost}
+                    value={freePremiumCounter}
+                    loading={onPremiumLoading}
+                    onReward={async () => {
+                      setOnPremiumtLoading(true);
+                      await updateFreePremCounter()
+                        .then((res) => {
+                          setFreePremActivated(res);
+                          Promise.all([fetchProfile(), loadAllInvitations()]);
+                        })
+                        .finally(() => {
+                          setOnPremiumtLoading(false);
+                        });
+                    }}
+                  />
+                )}
                 <ProgressBar
-                  label={`📄 ${t("invitations.freeReport")}`}
-                  max={FreeReportCost}
-                  value={freeReportsCounter}
-                  loading={onReportLoading}
+                  label={`💖 ${t("invitations.freeLives")}`}
+                  max={FreeLivesCost}
+                  value={freeLivesCounter}
+                  loading={onLivesLoading}
                   onReward={() => {
-                    setOnReportLoading(true);
-                    updateFreeReportCounter()
+                    setOnLivesLoading(true);
+                    updateFreeLivesCounter()
                       .then(() =>
                         Promise.all([fetchProfile(), loadAllInvitations()]),
                       )
                       .finally(() => {
-                        setOnReportLoading(false);
-                      });
-                  }}
-                />
-                <ProgressBar
-                  label={`🧠 ${t("invitations.freeTest")}`}
-                  max={FreeTestCost}
-                  value={freeTestsCounter}
-                  loading={onTestLoading}
-                  onReward={() => {
-                    setOnTestLoading(true);
-                    updateFreeTestCounter()
-                      .then(() =>
-                        Promise.all([fetchProfile(), loadAllInvitations()]),
-                      )
-                      .finally(() => {
-                        setOnTestLoading(false);
-                        navigate("/main?filter=gift");
+                        setOnLivesLoading(false);
+                        navigate("/main?filter=all");
                       });
                   }}
                 />

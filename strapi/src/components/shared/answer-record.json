@@ -1,7 +1,7 @@
 {
   "collectionName": "components_shared_answer_records",
   "info": {
-    "displayName": "AnswerRecord",
+    "displayName": "answerRecord",
     "icon": "alien"
   },
   "options": {},
@@ -10,12 +10,6 @@
       "type": "integer"
     },
     "answerIndex": {
-      "type": "integer"
-    },
-    "isCorrect": {
-      "type": "boolean"
-    },
-    "correctAnswerIndex": {
       "type": "integer"
     }
   },

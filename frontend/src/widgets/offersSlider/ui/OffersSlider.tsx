@@ -50,22 +50,45 @@ export const OffersSlider: FC<OffersSliderProps> = ({
       >
         <div>
           <div className="text-text-primary mb-[4px] text-[18px] font-semibold">
-            🎁 {t("offersSlider.getFreeTest")}
+            🎁 {t("offersSlider.getFreePrem")}
           </div>
           <div className="text-text-secondary mb-[12px] text-[16px] font-normal">
-            {t("offersSlider.inviteDescription")}
+            {t("offersSlider.freePremDescription")}
           </div>
         </div>
         <button
           onClick={() => {
             if (!referalsText) return;
             openTelegramLink(
-              `https://t.me/share/url?url=https://t.me/IQTestGoBot?start=${telegram_id}&text=${encodeURIComponent(referalsText)}`,
+              `https://t.me/share/url?url=https://t.me/ListenLinkerBot?start=${telegram_id}&text=${encodeURIComponent(referalsText)}`,
             );
           }}
           className="bg-surface-brand flex items-center justify-center rounded-[12px] p-[16px] text-[16px] font-medium text-white"
         >
-          {t("offersSlider.getFreeTest")}
+          {t("offersSlider.invite")}
+        </button>
+      </div>
+      <div
+        className={`bg-surface-primary border-outline-secondary flex shrink-0 flex-col items-start justify-between rounded-[16px] border-[1.5px] p-[16px] ${showPremium ? "w-[90%]" : "w-full"}`}
+      >
+        <div>
+          <div className="text-text-primary mb-[4px] text-[18px] font-semibold">
+            💖 {t("offersSlider.getFreeLives")}
+          </div>
+          <div className="text-text-secondary mb-[12px] text-[16px] font-normal">
+            {t("offersSlider.freeLivesDescription")}
+          </div>
+        </div>
+        <button
+          onClick={() => {
+            if (!referalsText) return;
+            openTelegramLink(
+              `https://t.me/share/url?url=https://t.me/ListenLinkerBot?start=${telegram_id}&text=${encodeURIComponent(referalsText)}`,
+            );
+          }}
+          className="bg-surface-brand flex items-center justify-center rounded-[12px] p-[16px] text-[16px] font-medium text-white"
+        >
+          {t("offersSlider.invite")}
         </button>
       </div>
     </div>

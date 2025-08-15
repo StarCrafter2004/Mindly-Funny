@@ -387,14 +387,25 @@ export interface ApiAppConfigAppConfig extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    livesCostStars1: Schema.Attribute.Integer;
+    livesCostStars3: Schema.Attribute.Integer;
+    livesCostStars5: Schema.Attribute.Integer;
+    livesCostTon1: Schema.Attribute.Decimal;
+    livesCostTon3: Schema.Attribute.Decimal;
+    livesCostTon5: Schema.Attribute.Decimal;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::app-config.app-config'
     > &
       Schema.Attribute.Private;
-    premiumCostStars: Schema.Attribute.Integer;
-    premiumCostTon: Schema.Attribute.Decimal;
+    minLives: Schema.Attribute.Integer;
+    premiumCostStars12Month: Schema.Attribute.Integer;
+    premiumCostStars1Month: Schema.Attribute.Integer;
+    premiumCostStars6Month: Schema.Attribute.Integer;
+    premiumCostTon12Month: Schema.Attribute.Decimal;
+    premiumCostTon1Month: Schema.Attribute.Decimal;
+    premiumCostTon6Month: Schema.Attribute.Decimal;
     publishedAt: Schema.Attribute.DateTime;
     referalsText: Schema.Attribute.Text;
     updatedAt: Schema.Attribute.DateTime;
@@ -491,6 +502,34 @@ export interface ApiCustomLocaleCustomLocale
   };
 }
 
+export interface ApiFilterFilter extends Struct.CollectionTypeSchema {
+  collectionName: 'filters';
+  info: {
+    displayName: 'Filter';
+    pluralName: 'filters';
+    singularName: 'filter';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::filter.filter'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGiftConfigGiftConfig extends Struct.SingleTypeSchema {
   collectionName: 'gift_configs';
   info: {
@@ -505,8 +544,9 @@ export interface ApiGiftConfigGiftConfig extends Struct.SingleTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    FreeReportCost: Schema.Attribute.Integer;
-    FreeTestCost: Schema.Attribute.Integer;
+    FreeLivesCost: Schema.Attribute.Integer;
+    FreePremiumCost: Schema.Attribute.Integer;
+    LivesForRefs: Schema.Attribute.Integer;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -629,7 +669,6 @@ export interface ApiReferralReferral extends Struct.CollectionTypeSchema {
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    isUsed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -664,15 +703,20 @@ export interface ApiTUserTUser extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     firstName: Schema.Attribute.String;
-    freeReports: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    freeReportsCounter: Schema.Attribute.Integer &
+    freeLivesCounter: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    FreePremActivated: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<false>;
+    freePremiumCounter: Schema.Attribute.Integer &
       Schema.Attribute.DefaultTo<0>;
-    freeTests: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
-    freeTestsCounter: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
     isPremium: Schema.Attribute.Boolean;
     isProfileComplete: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
+    isTestPassed: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    lastDailyCheck: Schema.Attribute.DateTime;
     lastName: Schema.Attribute.String;
+    lives: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<3>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -704,12 +748,11 @@ export interface ApiTestResultTestResult extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    AnswerRecords: Schema.Attribute.Component<'shared.answer-record', true> &
+    answerRecords: Schema.Attribute.Component<'shared.answer-record', true> &
       Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    iq: Schema.Attribute.Integer & Schema.Attribute.Required;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -750,26 +793,18 @@ export interface ApiTestTest extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    filter: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     Images: Schema.Attribute.Component<'shared.question-image', true> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;
         };
       }>;
-    isGift: Schema.Attribute.Boolean &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }> &
-      Schema.Attribute.DefaultTo<false>;
-    isReportFree: Schema.Attribute.Boolean &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }> &
-      Schema.Attribute.DefaultTo<true>;
     isTestFree: Schema.Attribute.Boolean &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
@@ -794,19 +829,19 @@ export interface ApiTestTest extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
-    resultsStars: Schema.Attribute.Integer &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }>;
-    resultsTon: Schema.Attribute.Decimal &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: false;
-        };
-      }>;
     stars: Schema.Attribute.Integer &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    statuses: Schema.Attribute.Component<'shared.status', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    statusImages: Schema.Attribute.Component<'shared.status-image', true> &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;
@@ -819,6 +854,19 @@ export interface ApiTestTest extends Struct.CollectionTypeSchema {
         };
       }>;
     ton: Schema.Attribute.Decimal &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    tresholds: Schema.Attribute.Component<'shared.threshold', true> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    type: Schema.Attribute.String &
+      Schema.Attribute.Required &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: false;
@@ -1372,6 +1420,7 @@ declare module '@strapi/strapi' {
       'api::celebrity.celebrity': ApiCelebrityCelebrity;
       'api::country.country': ApiCountryCountry;
       'api::custom-locale.custom-locale': ApiCustomLocaleCustomLocale;
+      'api::filter.filter': ApiFilterFilter;
       'api::gift-config.gift-config': ApiGiftConfigGiftConfig;
       'api::payment.payment': ApiPaymentPayment;
       'api::profession.profession': ApiProfessionProfession;

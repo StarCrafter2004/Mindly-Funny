@@ -11,14 +11,47 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "premiumCostStars": {
-      "type": "integer"
-    },
-    "premiumCostTon": {
-      "type": "decimal"
-    },
     "referalsText": {
       "type": "text"
+    },
+    "premiumCostStars1Month": {
+      "type": "integer"
+    },
+    "premiumCostTon1Month": {
+      "type": "decimal"
+    },
+    "premiumCostStars6Month": {
+      "type": "integer"
+    },
+    "premiumCostTon6Month": {
+      "type": "decimal"
+    },
+    "premiumCostStars12Month": {
+      "type": "integer"
+    },
+    "premiumCostTon12Month": {
+      "type": "decimal"
+    },
+    "minLives": {
+      "type": "integer"
+    },
+    "livesCostStars1": {
+      "type": "integer"
+    },
+    "livesCostStars3": {
+      "type": "integer"
+    },
+    "livesCostStars5": {
+      "type": "integer"
+    },
+    "livesCostTon1": {
+      "type": "decimal"
+    },
+    "livesCostTon3": {
+      "type": "decimal"
+    },
+    "livesCostTon5": {
+      "type": "decimal"
     }
   }
 }

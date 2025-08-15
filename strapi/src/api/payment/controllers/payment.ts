@@ -2,6 +2,25 @@
  * payment controller
  */
 
-import { factories } from '@strapi/strapi'
+import { factories } from "@strapi/strapi";
 
-export default factories.createCoreController('api::payment.payment');
+export default factories.createCoreController("api::payment.payment", ({ strapi }) => ({
+  async updateStatus(ctx) {
+    const { payload, payment_status } = ctx.params;
+    const documentId = await strapi
+      .documents("api::payment.payment")
+      .findFirst({
+        filters: {
+          payload,
+        },
+      })
+      .then((res) => res.documentId);
+
+    const res = await strapi.documents("api::payment.payment").update({
+      documentId,
+      data: {
+        payment_status,
+      },
+    });
+  },
+}));

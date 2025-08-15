@@ -17,6 +17,9 @@ export type ProfileDataFromAPI = {
   isProfileComplete: boolean;
   isPremium: boolean;
   freeReports: number;
+  isTestPassed: boolean;
+  FreePremActivated: boolean;
+  lives: number;
 };
 
 type Country = {
@@ -34,6 +37,7 @@ type ProfileStore = {
   country: string | null;
   isProfileComplete: boolean;
   isPremium: boolean;
+
   redirectToAfterFill: string | null;
 
   editedSex: Sex;
@@ -45,6 +49,10 @@ type ProfileStore = {
   professions: Profession[];
 
   freeReports: number;
+
+  isTestPassed: boolean;
+  FreePremActivated: boolean;
+  lives: number;
 
   setSex: (sex: Sex) => void;
   setAge: (age: Age) => void;
@@ -75,7 +83,10 @@ type ProfileStore = {
   setEditedAge: (age: Age) => void;
   setEditedProfession: (profession: string | null) => void;
   setEditedCountry: (country: string | null) => void;
+  setPremium: (stauts: boolean) => void;
   setRedirectToAfterFill: (path: string | null) => void;
+  setLives: (lives: number) => void;
+  setFreePremActivated: (FreePremActivated: boolean) => void;
 };
 
 const defaultState = {
@@ -94,6 +105,9 @@ const defaultState = {
   countries: [],
   professions: [],
   freeReports: 0,
+  isTestPassed: false,
+  FreePremActivated: false,
+  lives: 0,
 };
 
 export const useProfileStore = create<ProfileStore>((set, get) => ({
@@ -146,6 +160,9 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
           isProfileComplete: profileDataRaw.isProfileComplete,
           isPremium: profileDataRaw.isPremium,
           freeReports: profileDataRaw.freeReports,
+          isTestPassed: profileDataRaw.isTestPassed,
+          lives: profileDataRaw.lives,
+          FreePremActivated: profileDataRaw.FreePremActivated,
         });
         set({
           editedSex: profileDataRaw.sex,
@@ -200,6 +217,10 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     }
   },
 
+  setPremium: (status) => {
+    set({ isPremium: status });
+  },
+
   setEditedSex: (sex: Sex) => set({ editedSex: sex }),
 
   setEditedAge: (age: Age) => set({ editedAge: age }),
@@ -209,4 +230,10 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
 
   setEditedCountry: (country: string | null) => set({ editedCountry: country }),
   setRedirectToAfterFill: (path) => set({ redirectToAfterFill: path }),
+  setLives: (lives: number) => {
+    set({ lives });
+  },
+  setFreePremActivated: (FreePremActivated: boolean) => {
+    set({ FreePremActivated });
+  },
 }));

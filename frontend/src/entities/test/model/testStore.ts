@@ -15,7 +15,7 @@ type TestState = {
   Images: QuestionImage[];
   isTestFree: boolean;
   isReportFree: boolean;
-  isFinished: boolean;
+
   loading: boolean;
   error: string | null;
   isResultPurchased: boolean;
@@ -26,9 +26,9 @@ type TestState = {
   answerQuestion: (answerIndex: number) => void;
 
   nextQuestion: () => void;
-  finishTest: () => void;
+
   tickTime: () => void;
-  reset: () => void;
+  setLoading: (loading: boolean) => void;
   setDefault: () => void;
   setIsResultPurchased: (isResultPurchased: boolean) => void;
   autoFillRemainingAnswers: () => void;
@@ -42,7 +42,7 @@ const defaultState = {
   answers: [],
   timeLimit: null,
   initialTimeLimit: null,
-  isFinished: false,
+
   loading: false,
   error: null,
   Images: [],
@@ -57,7 +57,7 @@ export const useTestStore = create<TestState>((set) => ({
   ...defaultState,
 
   setQuestions: (questions) =>
-    set({ questions, currentQuestionIndex: 0, answers: [], isFinished: false }),
+    set({ questions, currentQuestionIndex: 0, answers: [] }),
 
   fetchTestByDocumentId: async (id) => {
     set({ loading: true, error: null });
@@ -74,7 +74,6 @@ export const useTestStore = create<TestState>((set) => ({
         questions: test.questions,
         currentQuestionIndex: 0,
         answers: [],
-        isFinished: false,
         timeLimit: timeLimitInSeconds,
         initialTimeLimit: timeLimitInSeconds,
         Images: test.Images ?? [],
@@ -99,15 +98,9 @@ export const useTestStore = create<TestState>((set) => ({
 
   answerQuestion: (answerIndex) => {
     set((state) => {
-      const question = state.questions[state.currentQuestionIndex];
-      const correctAnswerIndex = question.answers.findIndex((a) => a.isCorrect);
-      const isCorrect = answerIndex === correctAnswerIndex;
-
       const newAnswerRecord = {
         questionIndex: state.currentQuestionIndex,
         answerIndex,
-        isCorrect,
-        correctAnswerIndex,
       };
 
       return {
@@ -145,18 +138,14 @@ export const useTestStore = create<TestState>((set) => ({
     });
   },
 
-  nextQuestion: () =>
-    set((state) => {
-      const nextIndex = state.currentQuestionIndex + 1;
-      const isFinished = nextIndex >= state.questions.length;
-
-      return {
-        currentQuestionIndex: nextIndex,
-        isFinished,
-      };
-    }),
-
-  finishTest: () => set({ isFinished: true }),
+  nextQuestion: () => {
+    set((state) => ({
+      currentQuestionIndex: state.currentQuestionIndex + 1,
+    }));
+  },
+  setLoading: (loading: boolean) => {
+    set({ loading });
+  },
 
   tickTime: () =>
     set((state) => {
@@ -169,7 +158,6 @@ export const useTestStore = create<TestState>((set) => ({
   setDefault: () => set(defaultState),
   setIsResultPurchased: (isResultPurchased: boolean) =>
     set({ isResultPurchased }),
-  reset: () => set(defaultState),
 
   setResultPurchased: (bool: boolean) => {
     set({ isResultPurchased: bool });

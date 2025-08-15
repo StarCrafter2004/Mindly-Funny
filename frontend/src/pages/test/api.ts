@@ -1,11 +1,6 @@
 import { api } from "@/shared/api/axiosInstance";
 import { useUserStore } from "@/entities/user";
-import type { AnswerRecord } from "@/entities/test";
-
-type TestResultPayload = {
-  telegram_id: number;
-  testId: string;
-};
+import type { TestResultPayload } from "@/entities/test";
 
 export async function getTestResultByTelegramAndTestId({
   telegram_id,
@@ -15,47 +10,6 @@ export async function getTestResultByTelegramAndTestId({
     `/api/test-results?filters[telegram_id][$eq]=${telegram_id}&filters[testId][$eq]=${testId}`,
   );
   return res.data.data[0] ?? null;
-}
-
-export async function createTestResult(payload: TestResultPayload) {
-  return await api.post("/api/test-results", {
-    data: payload,
-  });
-}
-
-export async function updateTestResult(id: number, payload: TestResultPayload) {
-  return await api.put(`/api/test-results/${id}`, {
-    data: payload,
-  });
-}
-
-export async function createTestResultByDocumentId(
-  testId: string | undefined,
-  AnswerRecords: AnswerRecord[],
-  iq: number,
-): Promise<void> {
-  const telegram_id = useUserStore.getState().user?.id;
-
-  if (!telegram_id || !testId) {
-    throw new Error("telegram_id or testId is missing");
-  }
-
-  const payload = {
-    telegram_id,
-    testId,
-    AnswerRecords: AnswerRecords,
-    iq,
-  };
-  const existing = await getTestResultByTelegramAndTestId({
-    telegram_id,
-    testId,
-  });
-
-  if (existing) {
-    await updateTestResult(existing.documentId, payload);
-  } else {
-    await createTestResult(payload);
-  }
 }
 
 export async function getTestIQPercentile(
@@ -164,3 +118,10 @@ export async function getFreeResult(testId?: string) {
   });
   return res.data.data.documentId;
 }
+
+export const decrementLife = async () => {
+  const res = await api.post<{ data: { lives: number } }>(
+    `/api/decrement-life`,
+  );
+  return res.data.data.lives;
+};

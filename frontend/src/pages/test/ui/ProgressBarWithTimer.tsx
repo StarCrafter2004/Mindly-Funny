@@ -1,7 +1,13 @@
 import { useTestStore } from "@/entities/test/model/testStore";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, type FC } from "react";
 
-export const ProgressBarWithTimer = () => {
+type ProgressBarWithTimer = {
+  setIsFinished: (arg0: boolean) => void;
+};
+
+export const ProgressBarWithTimer: FC<ProgressBarWithTimer> = ({
+  setIsFinished,
+}) => {
   const currentIndex = useTestStore((state) => state.currentQuestionIndex);
   const totalQuestions = useTestStore((state) => state.questions.length);
   const answeredPercent = ((currentIndex + 1) / totalQuestions) * 100;
@@ -18,7 +24,6 @@ export const ProgressBarWithTimer = () => {
     (s) => s.autoFillRemainingAnswers,
   );
 
-  const finishTest = useTestStore((s) => s.finishTest);
   useEffect(() => {
     const interval = setInterval(() => tickTime(), 1000);
     return () => {
@@ -30,7 +35,7 @@ export const ProgressBarWithTimer = () => {
     if (timeLeft !== null) {
       if (timeLeft <= 0) {
         autoFillRemainingAnswers();
-        finishTest();
+        setIsFinished(true);
       }
     }
   }, [timeLeft]);

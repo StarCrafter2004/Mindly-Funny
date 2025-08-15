@@ -15,4 +15,5 @@ exports.default = [
         name: "global::auth-tg-middleware", // 👈 имя по пути src/middlewares/auth-tg-middleware
         config: {}, // можно передавать настройки при необходимости
     },
+    "global::user-status",
 ];

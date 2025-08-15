@@ -19,10 +19,6 @@
     "referrer_id": {
       "type": "biginteger",
       "required": true
-    },
-    "isUsed": {
-      "type": "boolean",
-      "default": false
     }
   }
 }

@@ -1,12 +1,12 @@
 import { Outlet, NavLink } from "react-router";
 import Book from "@/shared/assets/icons/book.svg?react";
-import BookBlue from "@/shared/assets/icons/book-blue.svg?react";
+import BookBlue from "@/shared/assets/icons/orange_book.svg?react";
 import { useUserStore } from "@/entities/user";
 import { useState } from "react";
 import { useProfileStore } from "@/entities/user/model/fillProfileStore";
 import Crown from "@/shared/assets/icons/p-crown.svg?react";
 import Settings from "@/shared/assets/icons/settings.svg?react";
-import BlueSettings from "@/shared/assets/icons/blue_settings.svg?react";
+import BlueSettings from "@/shared/assets/icons/orange_settings.svg?react";
 
 export const MainLayout = () => {
   const user = useUserStore((store) => store.user);
