@@ -11,6 +11,6 @@ COPY . .
 ENV NODE_ENV=production
 
 EXPOSE 1337
-ENV NODE_OPTIONS="--max-old-space-size=1024"
-RUN npm run build
+
+RUN npm run build --verbose
 CMD [ "npm", "run", "start" ]
