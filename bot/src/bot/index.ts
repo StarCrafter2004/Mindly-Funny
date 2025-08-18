@@ -142,13 +142,24 @@ export function startBot() {
   });
 
   const domain = process.env.PUBLIC_URL;
+  const port = 4001;
+  const webhookPath = "/telegraf"; // если используете секретный путь, логируйте его тоже
+
+  console.log("=== Запуск Telegram-бота с вебхуком ===");
+  console.log(`[LOG] PUBLIC_URL: ${domain}`);
+  console.log(`[LOG] PORT: ${port}`);
+  console.log(`[LOG] WEBHOOK PATH: ${webhookPath}`);
+  console.log(`[LOG] TELEGRAM_BOT_TOKEN: ${process.env.TELEGRAM_BOT_TOKEN ? "OK" : "NOT SET"}`);
   if (!domain) throw new Error("PUBLIC_URL is not set");
 
   bot
     .launch({ webhook: { domain: domain, port: 4001 } })
-    .then(() => console.log("Сервер запущен"))
+    .then(() => {
+      console.log("[LOG] Сервер Telegram-бота успешно запущен.");
+      console.log(`[LOG] Вебхук ожидает запросы по адресу: ${domain}${webhookPath} (порт ${port})`);
+    })
     .catch((err) => {
-      console.error("Ошибка при запуске бота:", err);
+      console.error("[LOG] Ошибка при запуске бота:", err);
     });
 }
 
