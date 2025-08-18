@@ -152,6 +152,15 @@ export function startBot() {
   console.log(`[LOG] TELEGRAM_BOT_TOKEN: ${process.env.TELEGRAM_BOT_TOKEN ? "OK" : "NOT SET"}`);
   if (!domain) throw new Error("PUBLIC_URL is not set");
 
+  bot.use(async (ctx, next) => {
+    console.log(
+      `[WEBHOOK] update_id: ${ctx.update.update_id} type: ${Object.keys(ctx.update)
+        .filter((k) => k !== "update_id")
+        .join(", ")} time: ${new Date().toISOString()}`
+    );
+    await next();
+  });
+
   bot
     .launch({ webhook: { domain: domain, port: 4001 } })
     .then(() => {
