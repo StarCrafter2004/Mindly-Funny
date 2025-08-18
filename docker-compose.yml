@@ -62,7 +62,6 @@ services:
     environment:
       API_BASE_URL: http://strapi:1337
       TELEGRAM_BOT_TOKEN: 7090221986:AAHyJ46_m4iB1Km51BXjPCHoxX87CuP24qs
-    command: npm run devблтя
     networks:
       - app-network
 
