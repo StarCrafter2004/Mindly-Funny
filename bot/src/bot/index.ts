@@ -162,7 +162,7 @@ export function startBot() {
   });
 
   bot
-    .launch({ webhook: { domain: domain, port: 4001 } })
+    .launch({ webhook: { domain: domain, port: 4002 } })
     .then(() => {
       console.log("[LOG] Сервер Telegram-бота успешно запущен.");
       console.log(`[LOG] Вебхук ожидает запросы по адресу: ${domain}${webhookPath} (порт ${port})`);
