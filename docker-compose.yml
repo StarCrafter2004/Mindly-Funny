@@ -31,7 +31,7 @@ services:
     env_file:
       - ./frontend/.env
     environment:
-      VITE_API_URL: https://iq-fun.myfavouritegames.org
+      VITE_API_URL: https://iq-fun-test.myfavouritegames.org
     networks:
       - app-network
 
@@ -48,7 +48,7 @@ services:
       POSTGRES_DB: strapi_db
       DATABASE_HOST: db
       ADMIN_PATH: /cms
-      TELEGRAM_BOT_TOKEN: 7360025430:AAFofhh5-43skpwYnxRAPF6IAZgKfffXcWM
+      TELEGRAM_BOT_TOKEN: 8028947405:AAHWkfTDPk6f1IK1zKwvyJloUMjWjFRZPqU
       SRM_URL: /srm
     ports:
       - "1337:1337"
@@ -61,7 +61,7 @@ services:
       - ./bot/.env
     environment:
       API_BASE_URL: http://strapi:1337
-      TELEGRAM_BOT_TOKEN: 7360025430:AAFofhh5-43skpwYnxRAPF6IAZgKfffXcWM
+      TELEGRAM_BOT_TOKEN: 8028947405:AAHWkfTDPk6f1IK1zKwvyJloUMjWjFRZPqU
     networks:
       - app-network
 
