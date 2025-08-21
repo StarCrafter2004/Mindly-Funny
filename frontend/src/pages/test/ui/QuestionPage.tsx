@@ -220,15 +220,17 @@ export const QuestionPage = () => {
                 <button
                   key={i}
                   onClick={() => setSelectedAnswer(i)}
-                  className={`bg-surface-primary text-text-primary flex w-full justify-between rounded-[16px] border-[1.5px] px-[16px] py-[12px] text-[16px] font-medium ${
+                  className={`bg-surface-primary text-text-primary flex w-full items-center rounded-[16px] border-[1.5px] px-[16px] py-[12px] text-[16px] font-medium ${
                     isSelected
                       ? "border-surface-brand"
                       : "border-outline-secondary"
                   }`}
                 >
-                  <div>{answer.text}</div>
+                  <div className="min-w-0 flex-1 text-left break-words">
+                    {answer.text}
+                  </div>
                   <div
-                    className={`bg-surface-brand flex h-6 w-6 items-center justify-center rounded-full ${
+                    className={`bg-surface-brand ml-[16px] flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
                       isSelected ? "" : "opacity-0"
                     }`}
                   >
