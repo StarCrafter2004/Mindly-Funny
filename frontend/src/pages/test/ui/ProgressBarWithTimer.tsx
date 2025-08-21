@@ -40,8 +40,6 @@ export const ProgressBarWithTimer: FC<ProgressBarWithTimer> = ({
     }
   }, [timeLeft]);
 
-  if (timeLeft === null || maxTime === null) return null;
-
   return (
     <div className="mb-4 flex flex-row items-center justify-between gap-[8px]">
       <div className="bg-surface-secondary h-[12px] flex-1 overflow-hidden rounded-[50px]">
