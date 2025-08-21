@@ -153,6 +153,9 @@ export const QuestionPage = () => {
     } else {
       setResultsLoading(true);
 
+      if (!isTestPassed) {
+        api.post("/api/referrals/increment");
+      }
       console.log("finished");
       const answers = useTestStore.getState().answers;
       await createTestResultByDocumentId(documentId, answers);
@@ -167,9 +170,6 @@ export const QuestionPage = () => {
       }
     }
 
-    if (!isTestPassed) {
-      api.post("/api/referrals/increment");
-    }
     setSelectedAnswer(null);
   };
 
