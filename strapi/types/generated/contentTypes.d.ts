@@ -703,10 +703,25 @@ export interface ApiTUserTUser extends Struct.CollectionTypeSchema {
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     firstName: Schema.Attribute.String;
-    freeLivesCounter: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    freeLivesCounter: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
     FreePremActivated: Schema.Attribute.Boolean &
       Schema.Attribute.DefaultTo<false>;
     freePremiumCounter: Schema.Attribute.Integer &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      > &
       Schema.Attribute.DefaultTo<0>;
     isPremium: Schema.Attribute.Boolean;
     isProfileComplete: Schema.Attribute.Boolean &

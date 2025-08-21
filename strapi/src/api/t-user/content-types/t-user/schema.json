@@ -50,11 +50,15 @@
     },
     "freePremiumCounter": {
       "type": "integer",
-      "default": 0
+      "required": true,
+      "default": 0,
+      "min": 0
     },
     "freeLivesCounter": {
       "type": "integer",
-      "default": 0
+      "required": true,
+      "default": 0,
+      "min": 0
     },
     "FreePremActivated": {
       "type": "boolean",
