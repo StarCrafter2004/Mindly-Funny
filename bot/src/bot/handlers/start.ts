@@ -47,12 +47,12 @@ export function registerStartCommand(bot: Telegraf<Context>) {
     await ctx.replyWithPhoto(
       { source: imageBuffer },
       {
-        caption: "Добро пожаловать! Нажмите кнопку ниже для запуска миниапы 👇",
+        caption: "Welcome! Click the button below to launch the mini app 👇",
         reply_markup: {
           inline_keyboard: [
             [
               {
-                text: "Открыть миниапу",
+                text: "Open miniapp",
                 web_app: { url: `${process.env.PUBLIC_URL}` },
               },
             ],
