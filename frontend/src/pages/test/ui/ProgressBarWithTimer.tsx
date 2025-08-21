@@ -52,12 +52,14 @@ export const ProgressBarWithTimer: FC<ProgressBarWithTimer> = ({
           }}
         />
       </div>
-      <div className="text-text-primary flex min-w-[45px] justify-between text-[16px] font-medium">
-        <div>
-          {" "}
-          {minutes}:{String(seconds).padStart(2, "0")}
+      {!(timeLeft === null || maxTime === null) && (
+        <div className="text-text-primary flex min-w-[45px] justify-between text-[16px] font-medium">
+          <div>
+            {" "}
+            {minutes}:{String(seconds).padStart(2, "0")}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
