@@ -102,7 +102,7 @@ export const LivesCard: FC<LivesCardProps> = ({ onClose }) => {
           options={[
             { id: "1", label: `1 ${t("main.live")}` },
             { id: "3", label: `3 ${t("main.lives")}` },
-            { id: "5", label: `5 ${t("main.lives")}` },
+            { id: "10", label: `10 ${t("main.lives")}` },
           ]}
           value={selectedLives}
           onChange={(val) => setSelectedLives(val)}

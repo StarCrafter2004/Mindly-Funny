@@ -12,7 +12,7 @@ import { MainLayout } from "@/widgets/mainLayout/";
 import { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router";
 import { init, backButton } from "@telegram-apps/sdk-react";
-import { swipeBehavior } from "@telegram-apps/sdk";
+import { swipeBehavior, viewport } from "@telegram-apps/sdk";
 import { BackButton } from "./utils/BackButton.ts";
 import { Country, FillProfile, Profession } from "@/pages/fillProfile/index.ts";
 import { useProfileStore } from "@/entities/user/model/fillProfileStore.ts";
@@ -37,6 +37,10 @@ if (swipeBehavior.mount.isAvailable()) {
   if (swipeBehavior.disableVertical.isAvailable()) {
     swipeBehavior.disableVertical();
   }
+}
+
+if (viewport.expand.isAvailable()) {
+  viewport.expand();
 }
 
 function App() {
