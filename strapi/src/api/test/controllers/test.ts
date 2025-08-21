@@ -211,18 +211,37 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
   },
   async clientfindMany(ctx) {
     const userId = ctx.state.userId;
-    const { data, meta } = await super.find(ctx);
+    const { data: tests, meta } = await super.find(ctx);
 
+    // Получаем информацию о пользователе и восстанавливаем жизни
     let user = await strapi.documents("api::t-user.t-user").findFirst({
-      fields: ["lives", "lastDailyCheck"],
+      fields: ["isPremium", "lives", "lastDailyCheck"],
       filters: {
         telegram_id: userId,
       },
     });
-
     user = await restoreDailyLives(user);
-    const lives = user.lives;
 
-    return { data, meta, lives };
+    const isPremium = user.isPremium;
+
+    // Получаем ID всех платных тестов
+    const paidTestIds = tests.filter((t) => !t.isTestFree).map((t) => t.documentId);
+
+    // Получаем покупки пользователя по этим тестам
+    const purchases = await strapi.db.query("api::purchase.purchase").findMany({
+      where: {
+        userId: userId,
+        extra: { $in: paidTestIds },
+      },
+    });
+    const purchasedIds = new Set(purchases.map((p) => p.extra));
+
+    // Добавляем поле isPurchased
+    const mappedTests = tests.map((test) => ({
+      ...test,
+      isPurchased: test.isTestFree ? true : purchasedIds.has(test.documentId) || isPremium,
+    }));
+
+    return { data: mappedTests, meta, lives: user.lives };
   },
 }));
