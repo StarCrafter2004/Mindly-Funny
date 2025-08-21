@@ -42,7 +42,7 @@ export const LivesCard: FC<LivesCardProps> = ({ onClose }) => {
         setCostStars(livesCostStars3 || 0);
         setCostTon(livesCostTon3 || 0);
         break;
-      case "5":
+      case "10":
         setCostStars(livesCostStars5 || 0);
         setCostTon(livesCostTon5 || 0);
         break;
