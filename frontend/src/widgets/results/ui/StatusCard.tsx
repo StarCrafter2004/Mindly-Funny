@@ -25,7 +25,7 @@ export const StatusCard: FC<StatusCardProps> = ({
         </div>
       )}
       {image && (
-        <div className="border-outline-secondary relative aspect-square w-full overflow-hidden rounded-t-[16px] border-b-[1.5px]">
+        <div className="border-outline-secondary relative aspect-square w-full overflow-hidden border-b-[1.5px]">
           <div className="absolute inset-0 flex items-center justify-center">
             {/* Сюда придёт твой image */}
             <div className="h-full w-full object-cover">{image}</div>

@@ -167,9 +167,8 @@ export const ResultPage = () => {
                             <img src={baseUrl + image.url} className="w-full" />
                           ),
                         }
-                      : testName
-                        ? { testName }
-                        : {})}
+                      : {})}
+                    {...(testName ? { testName } : {})}
                     status={status}
                     description={description}
                   />
