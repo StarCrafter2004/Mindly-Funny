@@ -836,6 +836,14 @@ export interface ApiTestTest extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    pinned: Schema.Attribute.Boolean &
+      Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Schema.Attribute.DefaultTo<false>;
     publishedAt: Schema.Attribute.DateTime;
     questions: Schema.Attribute.Component<'shared.question', true> &
       Schema.Attribute.Required &

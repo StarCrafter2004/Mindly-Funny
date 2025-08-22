@@ -84,6 +84,13 @@ export const ResultPage = () => {
         status={status}
         description={description}
       />
+
+      <PrimaryButton
+        onClick={() => setIsShareModalOpen(true)}
+        className="mb-[12px] w-full rounded-[16px] p-[18px]"
+      >
+        {t("results.share")}
+      </PrimaryButton>
       <div className="text-text-primary text- mb-[12px] text-[24px] font-semibold">
         {t("results.answers.title")}
       </div>
@@ -116,13 +123,6 @@ export const ResultPage = () => {
           </SecondaryButton>
         </Link>
       )}
-
-      <PrimaryButton
-        onClick={() => setIsShareModalOpen(true)}
-        className="mb-[12px] w-full rounded-[16px] p-[18px]"
-      >
-        {t("results.share")}
-      </PrimaryButton>
 
       <SecondaryButton
         onClick={() => {

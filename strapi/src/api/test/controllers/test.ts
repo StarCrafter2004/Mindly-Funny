@@ -63,7 +63,17 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
       filters: finalFilters, // любые фильтры
     });
 
-    const tests = testsResponse;
+    let tests = testsResponse;
+
+    if (filter === "all") {
+      tests = tests.sort((a, b) => {
+        // pinned true → выше
+        if (a.pinned && !b.pinned) return -1;
+        if (!a.pinned && b.pinned) return 1;
+        // если оба pinned или оба не pinned — сортируем по createdAt:desc
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
+    }
 
     let user = await strapi.documents("api::t-user.t-user").findFirst({
       filters: {
