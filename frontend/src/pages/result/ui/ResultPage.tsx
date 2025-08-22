@@ -161,6 +161,7 @@ export const ResultPage = () => {
               <ShareModal
                 children={
                   <StatusCard
+                    className="max-w-[80%]"
                     {...(image?.url
                       ? {
                           image: (
