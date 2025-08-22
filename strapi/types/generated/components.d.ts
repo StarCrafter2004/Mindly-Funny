@@ -58,7 +58,7 @@ export interface SharedStatus extends Struct.ComponentSchema {
     displayName: 'status';
   };
   attributes: {
-    description: Schema.Attribute.String;
+    description: Schema.Attribute.Text;
     name: Schema.Attribute.String;
     statusIndex: Schema.Attribute.Integer;
   };

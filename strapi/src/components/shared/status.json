@@ -9,7 +9,7 @@
       "type": "string"
     },
     "description": {
-      "type": "string"
+      "type": "text"
     },
     "statusIndex": {
       "type": "integer"
