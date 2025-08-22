@@ -161,7 +161,15 @@ export const ResultPage = () => {
               <ShareModal
                 children={
                   <StatusCard
-                    className="w-[75%]"
+                    {...(image?.url
+                      ? {
+                          image: (
+                            <img src={baseUrl + image.url} className="w-full" />
+                          ),
+                        }
+                      : testName
+                        ? { testName }
+                        : {})}
                     status={status}
                     description={description}
                   />
