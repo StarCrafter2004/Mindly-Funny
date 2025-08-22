@@ -35,6 +35,7 @@ export const ResultPage = () => {
     status,
     type,
     image,
+    testName,
     isLoading: loading,
   } = useResultStore();
 
@@ -80,7 +81,11 @@ export const ResultPage = () => {
         {t("results.title")}
       </div>
       <StatusCard
-        image={<img src={baseUrl + (image?.url ?? "")} className="w-full" />}
+        {...(image?.url
+          ? { image: <img src={baseUrl + image.url} className="w-full" /> }
+          : testName
+            ? { testName }
+            : {})}
         status={status}
         description={description}
       />
@@ -156,7 +161,7 @@ export const ResultPage = () => {
               <ShareModal
                 children={
                   <StatusCard
-                    className="w-[90%]"
+                    className="w-[75%]"
                     status={status}
                     description={description}
                   />

@@ -1,6 +1,7 @@
 import type { FC, ReactNode } from "react";
 
 type StatusCardProps = {
+  testName?: ReactNode;
   image?: ReactNode;
   status: string | null;
   description: string | null;
@@ -8,6 +9,7 @@ type StatusCardProps = {
 };
 
 export const StatusCard: FC<StatusCardProps> = ({
+  testName,
   image,
   status,
   description,
@@ -17,6 +19,11 @@ export const StatusCard: FC<StatusCardProps> = ({
     <div
       className={`border-outline-secondary bg-surface-primary mb-[24px] flex flex-col rounded-[16px] border-[1.5px] ${className}`}
     >
+      {testName && (
+        <div className="border-outline-secondary text-text-primary n w-full rounded-t-[16px] border-b-[1.5px] p-[16px] text-[18px] font-semibold">
+          {testName}
+        </div>
+      )}
       {image && (
         <div className="border-outline-secondary relative aspect-square w-full overflow-hidden rounded-t-[16px] border-b-[1.5px]">
           <div className="absolute inset-0 flex items-center justify-center">
@@ -25,6 +32,7 @@ export const StatusCard: FC<StatusCardProps> = ({
           </div>
         </div>
       )}
+
       <div className="p-[16px]">
         {" "}
         <div className="text-text-primary mb-[4px] text-[18px] font-semibold">

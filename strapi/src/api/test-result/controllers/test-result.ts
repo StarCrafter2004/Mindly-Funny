@@ -25,7 +25,7 @@ export default factories.createCoreController("api::test-result.test-result", ({
         },
         tresholds: true,
       },
-      fields: "type",
+      fields: ["type", "name"],
       locale,
     });
 
@@ -108,6 +108,7 @@ export default factories.createCoreController("api::test-result.test-result", ({
 
     return {
       data: {
+        name: testResponse.name,
         status: selectedStatus?.name ?? "",
         description: selectedStatus?.description ?? "",
         type,

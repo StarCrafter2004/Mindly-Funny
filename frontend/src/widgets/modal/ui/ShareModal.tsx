@@ -88,7 +88,7 @@ export const ShareModal: FC<ShareModalProps> = ({ children, onClose }) => {
 
       <div
         ref={imageRef}
-        className="flex h-full w-full max-w-[80%] items-center justify-center"
+        className="flex h-full w-full max-w-[500px] items-center justify-center"
       >
         <div className="bg-surface-primary pointer-events-none absolute inset-0 -z-3"></div>
         <img className="absolute -z-1 w-full" src={bg} alt="" />

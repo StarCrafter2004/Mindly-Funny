@@ -4,7 +4,7 @@ import { gettestResult } from "@/entities/test/api";
 
 type ResultState = {
   isFetched: boolean;
-
+  testName: string | null;
   type: string | null;
   status: string | null;
   description: string | null;
@@ -17,7 +17,7 @@ type ResultState = {
 
 const defaultState = {
   isFetched: false,
-
+  testName: null,
   type: null,
   status: null,
   description: null,
@@ -34,6 +34,7 @@ export const useResultStore = create<ResultState>((set) => ({
       const res = await gettestResult(documentId);
 
       set({
+        testName: res.name,
         type: res.type ?? null,
         status: res.status ?? null,
         description: res.description ?? null,

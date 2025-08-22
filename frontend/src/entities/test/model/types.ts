@@ -120,6 +120,7 @@ export type questionAnswer = {
 };
 
 export type TestResult = {
+  name: string | null;
   type: string | null;
   status: string | null;
   description: string | null;
