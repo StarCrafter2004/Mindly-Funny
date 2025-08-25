@@ -47,7 +47,13 @@ export function registerStartCommand(bot: Telegraf<Context>) {
     await ctx.replyWithPhoto(
       { source: imageBuffer },
       {
-        caption: "Welcome! Click the button below to launch the mini app 👇",
+        caption:
+          "🎭 Open the app where every quiz feels like a mini-show!\n\n" +
+          "In just 3 minutes you’ll get your personal meme-diagnosis 🤯\n" +
+          "and the perfect reason for a story 📱✨\n\n" +
+          "Quizzes on all kinds of topics: anime 🎌, movies 🎬,\n" +
+          "relationships ❤️ and more 🌍\n\n" +
+          "Open it — and find out who you are today 🔮",
         reply_markup: {
           inline_keyboard: [
             [
