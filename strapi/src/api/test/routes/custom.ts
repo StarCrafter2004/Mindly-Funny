@@ -32,5 +32,13 @@ export default {
         auth: false, // если не нужна авторизация, иначе поставь true
       },
     },
+    {
+      method: "GET",
+      path: "/tests/info",
+      handler: "test.findInfo",
+      config: {
+        auth: false, // если не нужна авторизация, иначе поставь true
+      },
+    },
   ],
 };

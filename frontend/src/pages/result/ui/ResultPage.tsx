@@ -27,7 +27,7 @@ export const ResultPage = () => {
   const isFromProfile = location.pathname.startsWith("/profile");
 
   const {
-    isFetched,
+    currentId,
     fetchResult,
     setDefault,
     description,
@@ -37,13 +37,15 @@ export const ResultPage = () => {
     image,
     testName,
     isLoading: loading,
+    setId,
   } = useResultStore();
 
   console.log("image", image);
 
   useEffect(() => {
-    if (!isFetched) {
+    if (currentId != documentId) {
       fetchResult(documentId ?? "");
+      setId(documentId);
     }
   }, []);
 
@@ -122,7 +124,7 @@ export const ResultPage = () => {
       )}
 
       {questionAnswers.length > 3 && (
-        <Link to="/all-answers">
+        <Link to="/all-answers" state={{ fromResults: true }}>
           <SecondaryButton className="mb-[24px] w-full rounded-[16px] p-[18px]">
             {t("results.answers.viewAll")}
           </SecondaryButton>

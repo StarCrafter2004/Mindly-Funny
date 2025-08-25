@@ -3,6 +3,11 @@ import test from "../../test/controllers/test";
 
 type Type = "status-with-threshold" | "status-per-answer";
 export default factories.createCoreController("api::test-result.test-result", ({ strapi }) => ({
+  async findInfo(ctx) {
+    const { data, meta } = await super.find(ctx);
+
+    return { data, meta };
+  },
   async getTestResultWithStats(ctx) {
     const { id: documentId } = ctx.params;
     const locale = (ctx.query.locale as string) || "en";

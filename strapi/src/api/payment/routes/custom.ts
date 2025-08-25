@@ -8,5 +8,13 @@ export default {
         auth: false, // если не нужна авторизация, иначе поставь true
       },
     },
+    {
+      method: "GET",
+      path: "/payments/info",
+      handler: "payment.findInfo",
+      config: {
+        auth: false, // если не нужна авторизация, иначе поставь true
+      },
+    },
   ],
 };

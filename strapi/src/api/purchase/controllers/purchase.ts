@@ -5,6 +5,11 @@
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreController("api::purchase.purchase", ({ strapi }) => ({
+  async findInfo(ctx) {
+    const { data, meta } = await super.find(ctx);
+
+    return { data, meta };
+  },
   async createClient(ctx) {
     // Calling the default core action
     const userId = ctx.state.userId;

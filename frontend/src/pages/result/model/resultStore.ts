@@ -3,7 +3,7 @@ import type { Media, questionAnswer } from "@/entities/test";
 import { gettestResult } from "@/entities/test/api";
 
 type ResultState = {
-  isFetched: boolean;
+  currentId: string | null;
   testName: string | null;
   type: string | null;
   status: string | null;
@@ -13,10 +13,11 @@ type ResultState = {
   isLoading: boolean;
   fetchResult: (documentId: string) => Promise<void>;
   setDefault: () => void;
+  setId: (documentId?: string | null) => void;
 };
 
 const defaultState = {
-  isFetched: false,
+  currentId: null,
   testName: null,
   type: null,
   status: null,
@@ -46,10 +47,13 @@ export const useResultStore = create<ResultState>((set) => ({
       console.error("Failed to fetch test result:", error);
       set({ ...defaultState });
     } finally {
-      set({ isLoading: false, isFetched: true });
+      set({ isLoading: false });
     }
   },
 
+  setId: (documentId?: string | null) => {
+    set({ currentId: documentId });
+  },
   setDefault: () => {
     set(defaultState);
   },

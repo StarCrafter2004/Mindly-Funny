@@ -33,6 +33,11 @@ async function restoreDailyLives(user) {
 }
 
 export default factories.createCoreController("api::test.test", ({ strapi }) => ({
+  async findInfo(ctx) {
+    const { data, meta } = await super.find(ctx);
+
+    return { data, meta };
+  },
   async getUserTests(ctx) {
     const userId = ctx.state.userId;
     const page = Number(ctx.query.page) || 1;

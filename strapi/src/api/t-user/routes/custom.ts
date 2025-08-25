@@ -25,5 +25,13 @@ export default {
       path: "/increment-life",
       handler: "t-user.incrementLife",
     },
+    {
+      method: "GET",
+      path: "/t-users/info",
+      handler: "t-user.findInfo",
+      config: {
+        auth: false, // если не нужна авторизация, иначе поставь true
+      },
+    },
   ],
 };

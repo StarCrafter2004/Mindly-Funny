@@ -5,6 +5,11 @@ import { addMonths, isAfter } from "date-fns";
 import { factories } from "@strapi/strapi";
 
 export default factories.createCoreController("api::t-user.t-user", ({ strapi }) => ({
+  async findInfo(ctx) {
+    const { data, meta } = await super.find(ctx);
+
+    return { data, meta };
+  },
   async updatePremium(ctx) {
     const { id } = ctx.params;
     const { isPremium, premiumUntil } = ctx.request.body?.data || {};

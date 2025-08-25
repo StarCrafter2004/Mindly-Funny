@@ -8,5 +8,13 @@ export default {
         auth: false, // если не нужна авторизация, иначе поставь true
       },
     },
+    {
+      method: "GET",
+      path: "/test-results/info",
+      handler: "test-result.findInfo",
+      config: {
+        auth: false, // если не нужна авторизация, иначе поставь true
+      },
+    },
   ],
 };
