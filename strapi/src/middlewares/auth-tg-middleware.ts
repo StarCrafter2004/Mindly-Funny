@@ -16,6 +16,11 @@ export default (config, { strapi }) => {
 
     const isExcludedPutPath = ctx.method === "PUT" && EXCLUDE_PUT_PATHS.some((p) => path.startsWith(p));
 
+    if (path.includes("/info")) {
+      console.log("⚡ INFO path — пропускаем middleware:", path);
+      return await next();
+    }
+
     if (isExcludedPutPath) {
       console.log("⚡ Excluded PUT path:", ctx.request.path);
       return await next();

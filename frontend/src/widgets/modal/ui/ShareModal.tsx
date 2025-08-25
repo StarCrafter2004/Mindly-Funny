@@ -95,7 +95,7 @@ export const ShareModal: FC<ShareModalProps> = ({ children, onClose }) => {
         <div className="bg-surface-inversed/10 pointer-events-none absolute inset-0 -z-2"></div>
         {children}
       </div>
-      <div className="absolute flex w-full flex-col items-center p-[16px]">
+      <div className="absolute bottom-[0px] flex w-full flex-col items-center p-[16px]">
         {" "}
         <PrimaryButton
           onClick={() => uploadToStrapi()}
