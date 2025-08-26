@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router";
 import { useResultStore } from "../model/resultStore";
 import { useTranslation } from "react-i18next";
-import preparing from "@/shared/assets/img/preparing.png";
+import preparing from "@/shared/assets/img/preparing.webp";
 import { popup } from "@telegram-apps/sdk";
 import {
   clearCustomBackHandler,
