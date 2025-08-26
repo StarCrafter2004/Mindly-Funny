@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router";
 import { PrimaryButton } from "@/shared/components";
 import ChevronDown from "@/shared/assets/icons/chevron-down.svg?react";
 import { ProgressBarWithTimer } from "./ProgressBarWithTimer";
-import preparing from "@/shared/assets/img/preparing.png";
+import preparing from "@/shared/assets/img/preparing.webp";
 import {
   clearCustomBackHandler,
   setCustomBackHandler,
