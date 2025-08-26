@@ -12,18 +12,22 @@ export default defineConfig({
       "@": "/src",
     },
   },
-
+  build: {
+    minify: "esbuild", // можно "terser", но esbuild быстрее
+    target: "es2018", // уменьшает полифилы, если поддержка старых браузеров не нужна
+    cssMinify: true,
+    chunkSizeWarningLimit: 600, // чтобы не спамил при больших чанках
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+        },
+      },
+    },
+  },
   server: {
     allowedHosts: [".ngrok-free.app"],
-    host: true, // слушать 0.0.0.0, а не только localhost
+    host: true,
     port: 5173,
-
-    // proxy: {
-    //   "/api": {
-    //     target: "https://b3eae851623359.lhr.life", // или IP твоего локального сервера
-    //     changeOrigin: true,
-    //     rewrite: (path) => path.replace(/^\/api/, ""),
-    //   },
-    // },
   },
 });
