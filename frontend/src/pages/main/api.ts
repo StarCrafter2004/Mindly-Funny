@@ -29,6 +29,7 @@ export const getTests = async (
           page,
           pageSize: 6,
         },
+        locale,
       },
     });
     console.log(res);
