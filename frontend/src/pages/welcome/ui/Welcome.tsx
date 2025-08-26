@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import welcome from "@/shared/assets/img/welcome.png";
+import welcome from "@/shared/assets/img/welcome.webp";
 import { PrimaryButton } from "@/shared/components";
 import { useTranslation } from "react-i18next";
 

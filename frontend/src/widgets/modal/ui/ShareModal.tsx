@@ -1,4 +1,4 @@
-import bg from "@/shared/assets/img/share-bg.png";
+import bg from "@/shared/assets/img/share-bg.webp";
 import X from "@/shared/assets/icons/close.svg?react";
 import { useRef, useState, type FC, type ReactNode } from "react";
 

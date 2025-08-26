@@ -2,9 +2,9 @@ import { PricingCard } from "./PricingCard";
 import { useEffect, useState, type FC } from "react";
 import { requestInvoice } from "@/features/payment";
 
-import free from "@/shared/assets/img/free.png";
-import crown from "@/shared/assets/img/crown.png";
-import reports from "@/shared/assets/img/reports.png";
+import free from "@/shared/assets/img/free.webp";
+import crown from "@/shared/assets/img/crown.webp";
+import reports from "@/shared/assets/img/reports.webp";
 import { useTranslation } from "react-i18next";
 import { useProfileStore } from "@/entities/user/model/fillProfileStore";
 import { useUserStore } from "@/entities/user";

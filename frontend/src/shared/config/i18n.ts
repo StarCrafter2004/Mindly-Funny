@@ -35,8 +35,7 @@ i18n
     defaultNS: "translation",
     backend: {
       loadPath: "{{lng}}|{{ns}}",
-
-      request: (
+      request: async (
         _options: unknown,
         url: string,
         _payload: unknown,
@@ -44,36 +43,48 @@ i18n
       ) => {
         const [lng] = url.split("|");
 
-        api
-          .get<LocaleApiResponse>("/api/custom-locales", {
-            params: {
-              filters: {
-                code: {
-                  $eq: lng,
+        const MAX_RETRIES = 3;
+        const RETRY_DELAY = 500; // мс
+        let attempt = 0;
+
+        const fetchTranslations = async (): Promise<void> => {
+          try {
+            const res = await api.get<LocaleApiResponse>(
+              "/api/custom-locales",
+              {
+                params: {
+                  filters: { code: { $eq: lng } },
+                  fields: ["AppTranslation"],
                 },
               },
-              fields: ["AppTranslation"],
-            },
-          })
-          .then((res) => {
-            const json = res.data.data?.[0]?.AppTranslation;
+            );
 
+            const json = res.data.data?.[0]?.AppTranslation;
             if (json) {
+              console.log(`[i18n] Loaded translations for "${lng}"`);
               callback(null, { status: 200, data: json });
             } else {
-              callback(new Error("No translation data found"), {
-                status: 404,
-                data: {},
-              });
+              throw new Error("No translation data found");
             }
-          })
-          .catch((err) => {
-            console.error("Ошибка загрузки переводов:", err);
-            callback(err, { status: 500, data: {} });
-          });
+          } catch (err) {
+            attempt++;
+            console.warn(`[i18n] Attempt ${attempt} failed for "${lng}":`, err);
+            if (attempt < MAX_RETRIES) {
+              const delay = RETRY_DELAY * attempt;
+              console.log(`[i18n] Retrying in ${delay}ms...`);
+              setTimeout(fetchTranslations, delay);
+            } else {
+              console.error(
+                `[i18n] Failed to load translations for "${lng}" after ${MAX_RETRIES} attempts`,
+              );
+              callback(err, { status: 500, data: {} });
+            }
+          }
+        };
+
+        fetchTranslations();
       },
     },
-
     interpolation: {
       escapeValue: false,
     },
