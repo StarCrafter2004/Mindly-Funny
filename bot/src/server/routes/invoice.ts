@@ -209,6 +209,16 @@ invoiceRoutes.post("/verify-ton-boc", async (req, res) => {
       return res.status(404).json({ status: "not_found" });
     }
     setPurchase(payload);
+
+    try {
+      await api.put(`/api/payment/update-payment`, {
+        payload,
+        payment_status: "paid", // меняем статус на оплачено
+      });
+      console.log(`[${new Date().toISOString()}] [verify-ton-boc] payment status updated to "paid"`);
+    } catch (err) {
+      console.error(`[${new Date().toISOString()}] [verify-ton-boc] failed to update payment status:`, err);
+    }
     // 3. Вернём информацию о транзакции
     return res.json({
       status: "paid",
