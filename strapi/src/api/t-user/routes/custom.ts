@@ -43,7 +43,7 @@ export default {
     },
     {
       method: "PUT",
-      path: "/t-users/bot/:documentId",
+      path: "/t-users/bot/:id",
       handler: "t-user.updateBot",
       config: {
         auth: false, // если не нужна авторизация, иначе поставь true
