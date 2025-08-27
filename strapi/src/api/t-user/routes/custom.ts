@@ -33,5 +33,21 @@ export default {
         auth: false, // если не нужна авторизация, иначе поставь true
       },
     },
+    {
+      method: "POST",
+      path: "/t-users/bot",
+      handler: "t-user.createBot",
+      config: {
+        auth: false, // если не нужна авторизация, иначе поставь true
+      },
+    },
+    {
+      method: "PUT",
+      path: "/t-users/bot",
+      handler: "t-user.updateBot",
+      config: {
+        auth: false, // если не нужна авторизация, иначе поставь true
+      },
+    },
   ],
 };

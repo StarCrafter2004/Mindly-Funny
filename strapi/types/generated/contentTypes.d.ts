@@ -740,6 +740,7 @@ export interface ApiTUserTUser extends Struct.CollectionTypeSchema {
       Schema.Attribute.Private;
     premiumUntil: Schema.Attribute.DateTime;
     profession: Schema.Attribute.String;
+    promo: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     sex: Schema.Attribute.String & Schema.Attribute.DefaultTo<'notSet'>;
     telegram_id: Schema.Attribute.BigInteger &

@@ -10,6 +10,15 @@ export default factories.createCoreController("api::t-user.t-user", ({ strapi })
 
     return { data, meta };
   },
+
+  async createBot(ctx) {
+    const { data, meta } = await super.create(ctx);
+    return { data, meta };
+  },
+  async updateBot(ctx) {
+    const { data, meta } = await super.update(ctx);
+    return { data, meta };
+  },
   async updatePremium(ctx) {
     const { id } = ctx.params;
     const { isPremium, premiumUntil } = ctx.request.body?.data || {};

@@ -1,33 +1,61 @@
 import { Context } from "telegraf";
-import { Telegraf, Markup } from "telegraf";
+import { Telegraf } from "telegraf";
 import { api } from "../../api/axiosInstance";
 import fs from "fs";
 import path from "path";
 
 export function registerStartCommand(bot: Telegraf<Context>) {
   bot.start(async (ctx) => {
-    const parts = ctx.message.text.split(" ");
     const telegram_id = Number(ctx.from.id);
-    const refParam = parts[1];
-    const referrer_id = Number(refParam);
-    console.log("referrer_id", referrer_id);
-    if (refParam) {
-      if (isNaN(referrer_id)) {
-        await ctx.reply("Недопустимая реферальная ссылка.");
-      } else if (telegram_id === referrer_id) {
+    const firstName = ctx.from.first_name;
+    const lastName = ctx.from.last_name;
+    const username = ctx.from.username;
+    const parts = ctx.message.text.split(" ");
+    const param = parts[1]; // теперь тут может быть ref-123 или promo-someApp
+
+    let referrer_id: number | null = null;
+    let promo: string | null = null;
+
+    if (param) {
+      const [key, value] = param.split("-");
+
+      if (key === "ref" && value) {
+        referrer_id = Number(value);
+      } else if (key === "promo" && value) {
+        promo = value;
+      }
+    }
+
+    try {
+      const userRes = await api.get("/api/t-users/bot", {
+        params: { "filters[telegram_id][$eq]": telegram_id },
+      });
+
+      if (!userRes.data.data || userRes.data.data.length === 0) {
+        // создаем пользователя
+        await api.post("/api/t-users/bot", {
+          data: { telegram_id, firstName, lastName, username },
+        });
+        console.log("Пользователь создан");
+      } else {
+        console.log("Пользователь уже существует");
+      }
+    } catch (err) {
+      console.error("Ошибка проверки/создания пользователя:", err);
+    }
+
+    // Если есть реферал
+    if (referrer_id) {
+      if (telegram_id === referrer_id) {
         await ctx.reply("Нельзя использовать свою же реферальную ссылку.");
       } else {
         try {
-          console.log("telegram_id", telegram_id);
-          console.log("referrer_id", referrer_id);
           await api.post(`/api/referrals`, {
             data: {
               user_id: telegram_id,
               referrer_id,
             },
           });
-          console.log("успех");
-
           await ctx.reply("Вы были успешно зарегистрированы по реферальной ссылке!");
         } catch (err: any) {
           if (err.response?.status === 400) {
@@ -40,8 +68,23 @@ export function registerStartCommand(bot: Telegraf<Context>) {
       }
     }
 
+    // Если есть промо
+    if (promo) {
+      try {
+        await api.post(`/api/promos`, {
+          data: {
+            user_id: telegram_id,
+            promo,
+          },
+        });
+        await ctx.reply(`Промо ${promo} успешно зарегистрировано!`);
+      } catch (err) {
+        console.error("Ошибка при обработке промо:", err);
+      }
+    }
+
     // Всегда отправляем сообщение с изображением, кнопкой и текстом
-    const imagePath = path.join(__dirname, "../../assets/image.png"); // путь к картинке
+    const imagePath = path.join(__dirname, "../../assets/image.png");
     const imageBuffer = fs.readFileSync(imagePath);
 
     await ctx.replyWithPhoto(

@@ -21,6 +21,11 @@ export default (config, { strapi }) => {
       return await next();
     }
 
+    if (path.includes("/bot")) {
+      console.log("⚡ Excluded BOT path:", path);
+      return await next();
+    }
+
     if (isExcludedPutPath) {
       console.log("⚡ Excluded PUT path:", ctx.request.path);
       return await next();

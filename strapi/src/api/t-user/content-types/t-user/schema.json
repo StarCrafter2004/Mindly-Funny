@@ -75,6 +75,9 @@
     },
     "lastDailyCheck": {
       "type": "datetime"
+    },
+    "promo": {
+      "type": "string"
     }
   }
 }
