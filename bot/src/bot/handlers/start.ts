@@ -27,7 +27,7 @@ export function registerStartCommand(bot: Telegraf<Context>) {
     }
 
     try {
-      const userRes = await api.get("/api/t-users/bot", {
+      const userRes = await api.get("/api/t-users/info", {
         params: { "filters[telegram_id][$eq]": telegram_id },
       });
 
