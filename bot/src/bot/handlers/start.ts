@@ -79,7 +79,6 @@ export function registerStartCommand(bot: Telegraf<Context>) {
         await api.put(`/api/t-users/bot/${documentId}`, {
           data: { promo },
         });
-        await ctx.reply(`Промо ${promo} успешно зарегистрировано!`);
       } catch (err) {
         console.error("Ошибка при обработке промо:", err);
       }

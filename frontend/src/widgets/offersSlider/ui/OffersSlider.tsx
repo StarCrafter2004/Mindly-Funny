@@ -60,7 +60,7 @@ export const OffersSlider: FC<OffersSliderProps> = ({
           onClick={() => {
             if (!referalsText) return;
             openTelegramLink(
-              `https://t.me/share/url?url=https://t.me/test_lub_bot?start=${telegram_id}&text=${encodeURIComponent(referalsText)}`,
+              `https://t.me/share/url?url=https://t.me/test_lub_bot?start=ref-${telegram_id}&text=${encodeURIComponent(referalsText)}`,
             );
           }}
           className="bg-surface-brand flex items-center justify-center rounded-[12px] p-[16px] text-[16px] font-medium text-white"
@@ -83,7 +83,7 @@ export const OffersSlider: FC<OffersSliderProps> = ({
           onClick={() => {
             if (!referalsText) return;
             openTelegramLink(
-              `https://t.me/share/url?url=https://t.me/test_lub_bot?start=${telegram_id}&text=${encodeURIComponent(referalsText)}`,
+              `https://t.me/share/url?url=https://t.me/test_lub_bot?start=ref-${telegram_id}&text=${encodeURIComponent(referalsText)}`,
             );
           }}
           className="bg-surface-brand flex items-center justify-center rounded-[12px] p-[16px] text-[16px] font-medium text-white"

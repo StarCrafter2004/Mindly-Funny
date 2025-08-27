@@ -9,6 +9,7 @@ import { api } from "@/shared/api/axiosInstance";
 import { useAppStore } from "@/shared/lib/appStore";
 import { shareStory } from "@telegram-apps/sdk";
 import type { Media } from "@/entities/test/model/types";
+import { useUserStore } from "@/entities/user";
 
 type ShareModalProps = {
   onClose: () => void;
@@ -57,12 +58,12 @@ export const ShareModal: FC<ShareModalProps> = ({ children, onClose }) => {
       console.log("shareStory.isAvailable()", shareStory.isAvailable());
 
       console.log("Strapi upload result:", uploadRes.data);
-
+      const userId = useUserStore.getState().user?.id;
       if (shareStory.isAvailable()) {
         console.log(uploadRes.data[0].url);
         shareStory(baseUrl + uploadRes.data[0].url, {
           widgetLink: {
-            url: `https://t.me/test_lub_bot`,
+            url: `https://t.me/test_lub_bot?start=ref-${userId}`,
             name: "@test_lub_bot",
           },
         });
