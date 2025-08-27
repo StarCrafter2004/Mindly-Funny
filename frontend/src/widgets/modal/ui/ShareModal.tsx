@@ -63,8 +63,8 @@ export const ShareModal: FC<ShareModalProps> = ({ children, onClose }) => {
         console.log(uploadRes.data[0].url);
         shareStory(baseUrl + uploadRes.data[0].url, {
           widgetLink: {
-            url: `https://t.me/test_lub_bot?start=ref-${userId}`,
-            name: "@test_lub_bot",
+            url: `https://t.me/funnyTestsBot?start=ref-${userId}`,
+            name: "@funnyTestsBot",
           },
         });
       }
