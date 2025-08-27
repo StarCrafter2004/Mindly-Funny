@@ -25,20 +25,24 @@ export function registerStartCommand(bot: Telegraf<Context>) {
         promo = value;
       }
     }
+    let documentId: string | null = null;
 
     try {
+      // Проверяем пользователя
       const userRes = await api.get("/api/t-users/info", {
         params: { "filters[telegram_id][$eq]": telegram_id },
       });
 
       if (!userRes.data.data || userRes.data.data.length === 0) {
         // создаем пользователя
-        await api.post("/api/t-users/bot", {
+        const createRes = await api.post("/api/t-users/bot", {
           data: { telegram_id, firstName, lastName, username },
         });
-        console.log("Пользователь создан");
+        documentId = createRes.data.data.documentId;
+        console.log("Пользователь создан, documentId:", documentId);
       } else {
-        console.log("Пользователь уже существует");
+        documentId = userRes.data.data[0].documentId;
+        console.log("Пользователь уже существует, documentId:", documentId);
       }
     } catch (err) {
       console.error("Ошибка проверки/создания пользователя:", err);
@@ -69,13 +73,11 @@ export function registerStartCommand(bot: Telegraf<Context>) {
     }
 
     // Если есть промо
-    if (promo) {
+    // Если есть промо
+    if (promo && documentId) {
       try {
-        await api.post(`/api/promos`, {
-          data: {
-            user_id: telegram_id,
-            promo,
-          },
+        await api.put(`/api/t-users/bot/${documentId}`, {
+          data: { promo },
         });
         await ctx.reply(`Промо ${promo} успешно зарегистрировано!`);
       } catch (err) {
