@@ -42,50 +42,35 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
     const userId = ctx.state.userId;
     const page = Number(ctx.query.page) || 1;
     const pageSize = Number(ctx.query.pageSize) || 10;
-    const sort = ctx.query.sort || "createdAt:desc";
     const locale = (ctx.query.locale as string) || "en";
     const filter = (ctx.query.filter as string) || "all";
 
     const filtersMap = {
       all: {},
-      free: {
-        isTestFree: true,
-      },
-      paid: {
-        isTestFree: false,
-      },
+      free: { isTestFree: true },
+      paid: { isTestFree: false },
     };
 
-    let finalLimit = pageSize;
-
     const finalFilters = { ...filtersMap[filter] };
+    const startIndex = (page - 1) * pageSize;
 
+    // Сортируем сразу по pinned, потом по createdAt
     const testsResponse = await strapi.documents("api::test.test").findMany({
-      sort: ["createdAt:desc"],
-      limit: finalLimit,
-      start: (page - 1) * pageSize,
-      locale: locale,
-      filters: finalFilters, // любые фильтры
+      sort: ["pinned:desc", "createdAt:desc"],
+      limit: pageSize,
+      start: startIndex,
+      locale,
+      filters: finalFilters,
     });
 
     let tests = testsResponse;
 
-    if (filter === "all") {
-      tests = tests.sort((a, b) => {
-        // pinned true → выше
-        if (a.pinned && !b.pinned) return -1;
-        if (!a.pinned && b.pinned) return 1;
-        // если оба pinned или оба не pinned — сортируем по createdAt:desc
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-    }
-
+    // pinned теперь уже не нужно сортировать вручную
     let user = await strapi.documents("api::t-user.t-user").findFirst({
-      filters: {
-        telegram_id: userId,
-      },
+      filters: { telegram_id: userId },
       fields: ["isPremium", "lives", "lastDailyCheck"],
     });
+
     user = await restoreDailyLives(user);
 
     const isPremium = user.isPremium;
@@ -102,28 +87,26 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     const purchasedIds = new Set(purchases.map((p) => p.extra));
 
-    // Шаг 4: Добавляем флаг isPurchased к каждому тесту
     const mappedTests = tests.map((test) => ({
       ...test,
       isPurchased: test.isTestFree ? true : purchasedIds.has(test.documentId) || isPremium,
     }));
-    // const base = await super.find(ctx); // включает data + meta
+
     const total = await strapi.documents("api::test.test").count({
       filters: finalFilters,
       locale,
     });
 
-    /* 3. Считаем, сколько всего страниц */
     const pageCount = Math.ceil(total / pageSize);
-    // Возвращаем данные с пагинацией
+
     return {
-      data: finalLimit === 0 ? [] : mappedTests,
+      data: mappedTests,
       pagination: {
         page,
         pageSize,
-        total, // всего записей
-        pageCount, // всего страниц
-        hasNext: page < pageCount, // ← клиент сразу знает, подгружать ли дальше
+        total,
+        pageCount,
+        hasNext: page < pageCount,
       },
       lives,
     };
