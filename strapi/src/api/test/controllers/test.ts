@@ -55,7 +55,8 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     // 1. Получаем все ID с правильной сортировкой
     const allTests = await strapi.documents("api::test.test").findMany({
-      fields: ["documentId"],
+      fields: ["id"],
+
       sort: ["pinned:desc", "createdAt:desc"],
       locale,
       filters: finalFilters,
