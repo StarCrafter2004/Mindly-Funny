@@ -47,25 +47,43 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     const filtersMap = {
       all: {},
-      free: { isTestFree: true },
-      paid: { isTestFree: false },
+      free: { isTestFree: { $eq: true } },
+      paid: { isTestFree: { $eq: false } },
     };
 
     const finalFilters = { ...filtersMap[filter] };
-    const startIndex = (page - 1) * pageSize;
 
-    // Сортируем сразу по pinned, потом по createdAt
-    const testsResponse = await strapi.documents("api::test.test").findMany({
+    // 1. Получаем все ID с правильной сортировкой
+    const allTests = await strapi.documents("api::test.test").findMany({
+      fields: ["documentId"],
       sort: ["pinned:desc", "createdAt:desc"],
-      limit: pageSize,
-      start: startIndex,
       locale,
       filters: finalFilters,
     });
 
-    let tests = testsResponse;
+    const total = allTests.length;
+    const pageCount = Math.ceil(total / pageSize);
 
-    // pinned теперь уже не нужно сортировать вручную
+    // 2. Считаем границы страницы
+    const startIndex = (page - 1) * pageSize;
+    const pageIds = allTests.slice(startIndex, startIndex + pageSize).map((t) => t.documentId);
+
+    if (pageIds.length === 0) {
+      return {
+        data: [],
+        pagination: { page, pageSize, total, pageCount, hasNext: page < pageCount },
+        lives: 0,
+      };
+    }
+
+    // 3. Достаём тесты только по этим ID, сохраняя сортировку
+    const tests = await strapi.documents("api::test.test").findMany({
+      filters: { documentId: { $in: pageIds } },
+      sort: ["pinned:desc", "createdAt:desc"],
+      locale,
+    });
+
+    // 4. Достаём пользователя и обновляем жизни
     let user = await strapi.documents("api::t-user.t-user").findFirst({
       filters: { telegram_id: userId },
       fields: ["isPremium", "lives", "lastDailyCheck"],
@@ -73,32 +91,23 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     user = await restoreDailyLives(user);
 
-    const isPremium = user.isPremium;
-    const lives = user.lives;
+    const { isPremium, lives } = user;
 
+    // 5. Находим покупки
     const paidTestIds = tests.filter((t) => !t.isTestFree).map((t) => t.documentId);
-
     const purchases = await strapi.db.query("api::purchase.purchase").findMany({
-      where: {
-        userId: userId,
-        extra: { $in: paidTestIds },
-      },
+      where: { userId, extra: { $in: paidTestIds } },
     });
 
     const purchasedIds = new Set(purchases.map((p) => p.extra));
 
+    // 6. Проставляем isPurchased
     const mappedTests = tests.map((test) => ({
       ...test,
       isPurchased: test.isTestFree ? true : purchasedIds.has(test.documentId) || isPremium,
     }));
 
-    const total = await strapi.documents("api::test.test").count({
-      filters: finalFilters,
-      locale,
-    });
-
-    const pageCount = Math.ceil(total / pageSize);
-
+    // 7. Возвращаем результат
     return {
       data: mappedTests,
       pagination: {
