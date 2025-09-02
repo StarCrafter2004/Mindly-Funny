@@ -56,7 +56,7 @@ export default factories.createCoreController("api::test.test", ({ strapi }) => 
 
     // Сортируем сразу по pinned, потом по createdAt
     const testsResponse = await strapi.documents("api::test.test").findMany({
-      sort: ["pinned:asc", "createdAt:desc"],
+      sort: ["pinned:desc", "createdAt:desc"],
       limit: pageSize,
       start: startIndex,
       locale,
