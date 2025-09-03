@@ -50,8 +50,8 @@ export const useLanguageStore = create<LanguageState>()(
         }
       },
       setLanguage: async (language) => {
-        await i18n.changeLanguage(language); // меняем язык i18n
         set({ language });
+        await i18n.changeLanguage(language); // меняем язык i18n
       },
     }),
     {
