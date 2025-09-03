@@ -53,6 +53,7 @@ type ProfileStore = {
   isTestPassed: boolean;
   FreePremActivated: boolean;
   lives: number;
+  isProfieleLoaded: boolean;
 
   setSex: (sex: Sex) => void;
   setAge: (age: Age) => void;
@@ -63,6 +64,7 @@ type ProfileStore = {
     firstName?: string,
     lastName?: string,
     username?: string,
+    promo?: string,
   ) => Promise<void>;
   fetchCountry: () => Promise<void>;
   fetchProfession: () => Promise<void>;
@@ -71,6 +73,7 @@ type ProfileStore = {
     firstName?: string,
     lastName?: string,
     username?: string,
+    promo?: string,
   ) => Promise<void>;
   updateProfile: (data: {
     id: string | null;
@@ -108,6 +111,7 @@ const defaultState = {
   isTestPassed: false,
   FreePremActivated: false,
   lives: 0,
+  isProfieleLoaded: false,
 };
 
 export const useProfileStore = create<ProfileStore>((set, get) => ({
@@ -141,7 +145,7 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     }
   },
 
-  fetchProfile: async (firstName, lastName, username) => {
+  fetchProfile: async (firstName, lastName, username, promo) => {
     const telegramId = useUserStore.getState().user?.id as number;
     try {
       const res = await api.get<{ data: ProfileDataFromAPI[] }>(
@@ -163,6 +167,7 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
           isTestPassed: profileDataRaw.isTestPassed,
           lives: profileDataRaw.lives,
           FreePremActivated: profileDataRaw.FreePremActivated,
+          isProfieleLoaded: true,
         });
         set({
           editedSex: profileDataRaw.sex,
@@ -172,7 +177,13 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
         });
       } else {
         set(defaultState);
-        await get().createProfile(telegramId, firstName, lastName, username);
+        await get().createProfile(
+          telegramId,
+          firstName,
+          lastName,
+          username,
+          promo,
+        );
         console.warn("Profile not found for telegramId:", telegramId);
       }
     } catch (error) {
@@ -180,10 +191,10 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
     }
   },
 
-  createProfile: async (telegramId, firstName, lastName, username) => {
+  createProfile: async (telegramId, firstName, lastName, username, promo) => {
     try {
       const res = await api.post<{ data: ProfileDataFromAPI }>("/api/t-users", {
-        data: { telegram_id: telegramId, firstName, lastName, username },
+        data: { telegram_id: telegramId, firstName, lastName, username, promo },
       });
 
       const createdProfile = res.data.data;
@@ -195,6 +206,7 @@ export const useProfileStore = create<ProfileStore>((set, get) => ({
           profession: createdProfile.profession ?? null,
           country: createdProfile.country ?? null,
           isProfileComplete: false,
+          isProfieleLoaded: true,
         });
       }
     } catch (error) {

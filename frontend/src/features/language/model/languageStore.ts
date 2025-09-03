@@ -12,7 +12,7 @@ type LanguageOption = {
 
 interface LanguageState {
   language: string;
-  setLanguage: (language: string) => void;
+  setLanguage: (language: string) => Promise<void>;
   options: LanguageOption[];
   fetchOptions: () => Promise<void>;
 }
@@ -49,8 +49,8 @@ export const useLanguageStore = create<LanguageState>()(
           console.error("Ошибка загрузки языков:", error);
         }
       },
-      setLanguage: (language) => {
-        i18n.changeLanguage(language); // меняем язык i18n
+      setLanguage: async (language) => {
+        await i18n.changeLanguage(language); // меняем язык i18n
         set({ language });
       },
     }),

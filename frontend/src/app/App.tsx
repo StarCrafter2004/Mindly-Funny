@@ -10,7 +10,7 @@ import { ThemeSelect } from "@/pages/themeSelect";
 import { Welcome } from "@/pages/welcome";
 import { MainLayout } from "@/widgets/mainLayout/";
 import { useEffect } from "react";
-import { Route, Routes, useLocation } from "react-router";
+import { Route, Routes, useLocation, useNavigate } from "react-router";
 import { init, backButton } from "@telegram-apps/sdk-react";
 import { swipeBehavior, viewport } from "@telegram-apps/sdk";
 import { BackButton } from "./utils/BackButton.ts";
@@ -47,14 +47,22 @@ function App() {
   ASSET_IMAGES.forEach((src) =>
     preload(src, { as: "image", fetchPriority: "high" }),
   );
-
+  const navigate = useNavigate();
+  const isProfieleLoaded = useProfileStore((store) => store.isProfieleLoaded);
   const fetchProfile = useProfileStore((store) => store.fetchProfile);
   const firstName = useUserStore((store) => store.user)?.firstName;
   const lastName = useUserStore((store) => store.user)?.lastName;
   const username = useUserStore((store) => store.user)?.username;
+  const languageCode = useUserStore((store) => store.user)?.languageCode;
+  const promo = useUserStore((store) => store.promo);
+  const testId = useUserStore((store) => store.testId);
   const fetchLanguageOptions = useLanguageStore((store) => store.fetchOptions);
+  const setLanguage = useLanguageStore((store) => store.setLanguage);
+  const options = useLanguageStore((store) => store.options);
   const theme = useThemeStore((store) => store.resolvedTheme);
 
+  console.log("promo", promo);
+  console.log("testId", testId);
   const location = useLocation();
   const fetchCountry = useProfileStore((store) => store.fetchCountry);
   const fetchProfession = useProfileStore((store) => store.fetchProfession);
@@ -68,13 +76,34 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetchProfile(firstName, lastName, username);
+    fetchProfile(firstName, lastName, username, promo);
     fetchLanguageOptions();
     fetchCountry();
     fetchProfession();
     loadAppConfig();
     loadFilters();
   }, []);
+
+  useEffect(() => {
+    const loadTest = async () => {
+      if (options) {
+        const matchingOption = options.find(
+          (option) => option.code === languageCode,
+        );
+        if (matchingOption) {
+          await setLanguage(matchingOption.code);
+        }
+        console.log("язык установлен");
+        console.log("testId", testId);
+        console.log("isProfieleLoaded", isProfieleLoaded);
+        if (testId && isProfieleLoaded) {
+          console.log("тест загружен");
+          navigate(`/test/${testId}`);
+        }
+      }
+    };
+    loadTest();
+  }, [testId, options, languageCode, setLanguage, isProfieleLoaded]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;

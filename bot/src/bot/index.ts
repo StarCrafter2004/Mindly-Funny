@@ -173,7 +173,7 @@ export function startBot() {
 }
 
 async function setPurchase(payload: string) {
-  const [userId, type, extra] = payload.split("-");
+  const [userId, type, extra, time] = payload.split("-");
   console.log("extra", extra);
   console.log(userId, type, extra);
 
@@ -220,6 +220,7 @@ async function setPurchase(payload: string) {
           userId,
           type,
           extra,
+          time,
         },
       });
       console.log("[PURCHASE SAVED]", res.data);

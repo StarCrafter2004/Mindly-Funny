@@ -20,6 +20,9 @@
     },
     "extra": {
       "type": "string"
+    },
+    "time": {
+      "type": "integer"
     }
   }
 }

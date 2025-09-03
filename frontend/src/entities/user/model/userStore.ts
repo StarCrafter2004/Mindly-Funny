@@ -13,15 +13,31 @@ type User = {
 
 type UserStore = {
   user: User | null;
+  promo: string;
+  testId: string;
   initDataRaw?: string;
   isReady: boolean;
 };
 
-// ⛑️ Типизация вручную
-
 const launchParams = retrieveLaunchParams(true);
 const initDataRaw = retrieveRawInitData();
-console.log(initDataRaw);
+console.log(launchParams);
+
+// Функция для декодирования base64 JSON из startapp
+function parseStartAppBase64(param: string): Record<string, string> {
+  if (!param) return {};
+  try {
+    // Для браузера: atob
+    const json = atob(param);
+    return JSON.parse(json);
+  } catch (err) {
+    console.error("Ошибка парсинга startParam base64 JSON:", err);
+    return {};
+  }
+}
+
+const startParam = launchParams.tgWebAppData?.startParam || "";
+const parsedParams = parseStartAppBase64(startParam);
 
 const rawUser = launchParams.tgWebAppData?.user as User | undefined;
 let user: User | null = null;
@@ -42,6 +58,8 @@ if (rawUser) {
 
 export const useUserStore = create<UserStore>(() => ({
   user,
-  isReady,
+  promo: parsedParams.promo || "",
+  testId: parsedParams.test || "",
   initDataRaw,
+  isReady,
 }));

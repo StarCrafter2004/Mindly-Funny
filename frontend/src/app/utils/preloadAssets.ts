@@ -1,4 +1,4 @@
-import bg from "@/shared/assets/img/share-bg.webp";
+import bg from "@/shared/assets/img/share-bg.png";
 import crown from "@/shared/assets/img/crown.webp";
 import people from "@/shared/assets/img/man.webp";
 import star from "@/shared/assets/img/star.webp";
